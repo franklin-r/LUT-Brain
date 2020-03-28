@@ -1,0 +1,32 @@
+# # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
+# 
+preplace inst DE10_Standard_QSYS.pll_0 -pg 1 -lvl 3 -y 150
+preplace inst DE10_Standard_QSYS.jtag_uart -pg 1 -lvl 2 -y 370
+preplace inst DE10_Standard_QSYS.nios2_gen2_0.clock_bridge -pg 1
+preplace inst DE10_Standard_QSYS.nios2_gen2_0.reset_bridge -pg 1
+preplace inst DE10_Standard_QSYS -pg 1 -lvl 1 -y 40 -regy -20
+preplace inst DE10_Standard_QSYS.sdram -pg 1 -lvl 2 -y 130
+preplace inst DE10_Standard_QSYS.ELE8307_VGA_0 -pg 1 -lvl 4 -y 230
+preplace inst DE10_Standard_QSYS.onchip_memory2 -pg 1 -lvl 2 -y 690
+preplace inst DE10_Standard_QSYS.sysid_qsys -pg 1 -lvl 2 -y 250
+preplace inst DE10_Standard_QSYS.pll -pg 1 -lvl 2 -y 30
+preplace inst DE10_Standard_QSYS.clk_50 -pg 1 -lvl 1 -y 50
+preplace inst DE10_Standard_QSYS.nios2_gen2_0 -pg 1 -lvl 1 -y 600
+preplace inst DE10_Standard_QSYS.key -pg 1 -lvl 2 -y 570
+preplace inst DE10_Standard_QSYS.timer -pg 1 -lvl 2 -y 470
+preplace inst DE10_Standard_QSYS.nios2_gen2_0.cpu -pg 1
+preplace netloc FAN_OUT<net_container>DE10_Standard_QSYS</net_container>(MASTER)pll.outclk0,(SLAVE)sysid_qsys.clk,(SLAVE)key.clk,(SLAVE)onchip_memory2.clk1,(SLAVE)pll_0.refclk,(SLAVE)sdram.clk,(SLAVE)nios2_gen2_0.clk,(SLAVE)jtag_uart.clk,(SLAVE)ELE8307_VGA_0.av_clock,(SLAVE)timer.clk) 1 0 4 180 740 620 240 850 240 N
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)DE10_Standard_QSYS.pll_locked,(SLAVE)pll.locked) 1 0 2 NJ 40 NJ
+preplace netloc FAN_OUT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)jtag_uart.irq,(SLAVE)timer.irq,(SLAVE)key.irq,(MASTER)nios2_gen2_0.irq) 1 1 1 600
+preplace netloc INTERCONNECT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)ELE8307_VGA_0.avalon_slave,(SLAVE)key.s1,(SLAVE)onchip_memory2.s1,(SLAVE)sdram.s1,(MASTER)ELE8307_VGA_0.avalon_master,(SLAVE)nios2_gen2_0.debug_mem_slave,(MASTER)nios2_gen2_0.data_master,(SLAVE)sysid_qsys.control_slave,(MASTER)nios2_gen2_0.instruction_master,(SLAVE)jtag_uart.avalon_jtag_slave,(SLAVE)timer.s1) 1 0 5 200 760 580 340 NJ 340 1070 360 1320
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)ELE8307_VGA_0.conduit_end,(SLAVE)DE10_Standard_QSYS.vga_output) 1 0 4 NJ 360 NJ 360 NJ 380 NJ
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)DE10_Standard_QSYS.reset,(SLAVE)clk_50.clk_in_reset) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)ELE8307_VGA_0.clock_25,(MASTER)pll_0.outclk0) 1 3 1 1050
+preplace netloc INTERCONNECT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)timer.reset,(SLAVE)onchip_memory2.reset1,(SLAVE)ELE8307_VGA_0.av_reset,(SLAVE)jtag_uart.reset,(SLAVE)pll_0.reset,(SLAVE)sysid_qsys.reset,(MASTER)nios2_gen2_0.debug_reset_request,(SLAVE)key.reset,(SLAVE)nios2_gen2_0.reset,(SLAVE)pll.reset,(SLAVE)sdram.reset,(MASTER)clk_50.clk_reset) 1 0 4 220 780 660 120 870 360 NJ
+preplace netloc POINT_TO_POINT<net_container>DE10_Standard_QSYS</net_container>(MASTER)clk_50.clk,(SLAVE)pll.refclk) 1 1 1 N
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(MASTER)pll.outclk1,(MASTER)DE10_Standard_QSYS.clk_sdram) 1 2 3 NJ 60 NJ 60 NJ
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)DE10_Standard_QSYS.key_external_connection,(SLAVE)key.external_connection) 1 0 2 NJ 560 NJ
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)sdram.wire,(SLAVE)DE10_Standard_QSYS.sdram_wire) 1 0 2 NJ 200 NJ
+preplace netloc EXPORT<net_container>DE10_Standard_QSYS</net_container>(SLAVE)clk_50.clk_in,(SLAVE)DE10_Standard_QSYS.clk) 1 0 1 NJ
+levelinfo -pg 1 0 150 1430
+levelinfo -hier DE10_Standard_QSYS 160 340 700 900 1120 1340

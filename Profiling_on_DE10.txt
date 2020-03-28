@@ -1,0 +1,16 @@
+Instructions pour le profilage sur la DE-10:
+
+1 - Ouvrir deux NIOS Command Shell (right-click le projet sur Eclipse -> Nios II -> Nios II Command Shell ...)
+
+2 - Dans le premier shell, utilisez la commande: "nios2-terminal"
+
+3 - Dans le deuxième shell, utilisez la commande: "nios2-download -g --write-gmon gmon.out *.elf"
+
+4 - Il faut convertir le fichier gmon.out à un format .txt pour pouvoir le consulter. Pour ce faire, tapez:
+		"nios2-elf-gprof <nom_du fichier>.elf gmon.out > report.txt"
+
+Le premier shell sera votre "Nios Console" et le deuxième lance le projet. Il ne faut pas oublier d'activer gprof
+dans les configurations du BSP.
+
+
+Source : Profiling Nios II Systems Application Note 391, page 8 (dans Annexe DE10-Standard sur moodle)
