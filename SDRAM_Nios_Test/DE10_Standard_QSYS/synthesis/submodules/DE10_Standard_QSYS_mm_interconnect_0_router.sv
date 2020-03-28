@@ -49,21 +49,21 @@ module DE10_Standard_QSYS_mm_interconnect_0_router_default_decode
                DEFAULT_RD_CHANNEL = -1,
                DEFAULT_DESTID = 5 
    )
-  (output [204 - 202 : 0] default_destination_id,
-   output [8-1 : 0] default_wr_channel,
-   output [8-1 : 0] default_rd_channel,
-   output [8-1 : 0] default_src_channel
+  (output [206 - 203 : 0] default_destination_id,
+   output [9-1 : 0] default_wr_channel,
+   output [9-1 : 0] default_rd_channel,
+   output [9-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
-    DEFAULT_DESTID[204 - 202 : 0];
+    DEFAULT_DESTID[206 - 203 : 0];
 
   generate
     if (DEFAULT_CHANNEL == -1) begin : no_default_channel_assignment
       assign default_src_channel = '0;
     end
     else begin : default_channel_assignment
-      assign default_src_channel = 8'b1 << DEFAULT_CHANNEL;
+      assign default_src_channel = 9'b1 << DEFAULT_CHANNEL;
     end
   endgenerate
 
@@ -73,8 +73,8 @@ module DE10_Standard_QSYS_mm_interconnect_0_router_default_decode
       assign default_rd_channel = '0;
     end
     else begin : default_rw_channel_assignment
-      assign default_wr_channel = 8'b1 << DEFAULT_WR_CHANNEL;
-      assign default_rd_channel = 8'b1 << DEFAULT_RD_CHANNEL;
+      assign default_wr_channel = 9'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 9'b1 << DEFAULT_RD_CHANNEL;
     end
   endgenerate
 
@@ -93,7 +93,7 @@ module DE10_Standard_QSYS_mm_interconnect_0_router
     // Command Sink (Input)
     // -------------------
     input                       sink_valid,
-    input  [218-1 : 0]    sink_data,
+    input  [220-1 : 0]    sink_data,
     input                       sink_startofpacket,
     input                       sink_endofpacket,
     output                      sink_ready,
@@ -102,8 +102,8 @@ module DE10_Standard_QSYS_mm_interconnect_0_router
     // Command Source (Output)
     // -------------------
     output                          src_valid,
-    output reg [218-1    : 0] src_data,
-    output reg [8-1 : 0] src_channel,
+    output reg [220-1    : 0] src_data,
+    output reg [9-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -114,12 +114,12 @@ module DE10_Standard_QSYS_mm_interconnect_0_router
     // -------------------------------------------------------
     localparam PKT_ADDR_H = 175;
     localparam PKT_ADDR_L = 144;
-    localparam PKT_DEST_ID_H = 204;
-    localparam PKT_DEST_ID_L = 202;
-    localparam PKT_PROTECTION_H = 208;
-    localparam PKT_PROTECTION_L = 206;
-    localparam ST_DATA_W = 218;
-    localparam ST_CHANNEL_W = 8;
+    localparam PKT_DEST_ID_H = 206;
+    localparam PKT_DEST_ID_L = 203;
+    localparam PKT_PROTECTION_H = 210;
+    localparam PKT_PROTECTION_L = 208;
+    localparam ST_DATA_W = 220;
+    localparam ST_CHANNEL_W = 9;
     localparam DECODER_TYPE = 0;
 
     localparam PKT_TRANS_WRITE = 178;
@@ -159,7 +159,7 @@ module DE10_Standard_QSYS_mm_interconnect_0_router
     assign src_startofpacket = sink_startofpacket;
     assign src_endofpacket   = sink_endofpacket;
     wire [PKT_DEST_ID_W-1:0] default_destid;
-    wire [8-1 : 0] default_src_channel;
+    wire [9-1 : 0] default_src_channel;
 
 
 
@@ -185,7 +185,7 @@ module DE10_Standard_QSYS_mm_interconnect_0_router
            
          
           // ( 0 .. 4000000 )
-          src_channel = 8'b1;
+          src_channel = 9'b1;
           src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 5;
 	     
         

@@ -152,14 +152,14 @@ SOPC_SYSID_FLAG += --id=0
 ELF_PATCH_FLAG  += --id 0
 
 # The SOPC System ID Base Address 
-# setting SOPC_SYSID_BASE_ADDRESS is 0x4041070
-SOPC_SYSID_FLAG += --sidp=0x4041070
-ELF_PATCH_FLAG  += --sidp 0x4041070
+# setting SOPC_SYSID_BASE_ADDRESS is 0x4041090
+SOPC_SYSID_FLAG += --sidp=0x4041090
+ELF_PATCH_FLAG  += --sidp 0x4041090
 
 # The SOPC Timestamp 
-# setting SOPC_TIMESTAMP is 1581449475
-SOPC_SYSID_FLAG += --timestamp=1581449475
-ELF_PATCH_FLAG  += --timestamp 1581449475
+# setting SOPC_TIMESTAMP is 1585423257
+SOPC_SYSID_FLAG += --timestamp=1585423257
+ELF_PATCH_FLAG  += --timestamp 1585423257
 
 # Enable JTAG UART driver to recover when host is inactive causing buffer to 
 # full without returning error. Printf will not fail with this recovery. none 
@@ -193,7 +193,10 @@ ELF_PATCH_FLAG  += --timestamp 1581449475
 # Causes code to be compiled with gprof profiling enabled and the application 
 # ELF to be linked with the GPROF library. If true, adds -DALT_PROVIDE_GMON to 
 # ALT_CPPFLAGS and -pg to ALT_CFLAGS in public.mk. none 
-# setting hal.enable_gprof is false
+# setting hal.enable_gprof is true
+ALT_CPPFLAGS += -DALT_PROVIDE_GMON
+ALT_CFLAGS += -pg
+ELF_PATCH_FLAG  += --profiling_enabled true
 
 # Enables lightweight device driver API. This reduces code and data footprint 
 # by removing the HAL layer that maps device names (e.g. /dev/uart0) to file 

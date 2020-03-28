@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'DE10_Standard_QSYS'
  * SOPC Builder design path: ../../DE10_Standard_QSYS.sopcinfo
  *
- * Generated: Tue Feb 11 15:24:55 EST 2020
+ * Generated: Sat Mar 28 16:41:27 EDT 2020
  */
 
 /*
@@ -181,19 +181,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart"
-#define ALT_STDERR_BASE 0x4041078
+#define ALT_STDERR_BASE 0x4041098
 #define ALT_STDERR_DEV jtag_uart
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart"
-#define ALT_STDIN_BASE 0x4041078
+#define ALT_STDIN_BASE 0x4041098
 #define ALT_STDIN_DEV jtag_uart
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart"
-#define ALT_STDOUT_BASE 0x4041078
+#define ALT_STDOUT_BASE 0x4041098
 #define ALT_STDOUT_DEV jtag_uart
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -209,7 +209,7 @@
 #define ALT_INCLUDE_INSTRUCTION_RELATED_EXCEPTION_API
 #define ALT_MAX_FD 32
 #define ALT_SYS_CLK TIMER
-#define ALT_TIMESTAMP_CLK none
+#define ALT_TIMESTAMP_CLK TIMESTAMP_TIMER
 
 
 /*
@@ -218,7 +218,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x4041078
+#define JTAG_UART_BASE 0x4041098
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/jtag_uart"
@@ -236,7 +236,7 @@
  */
 
 #define ALT_MODULE_CLASS_key altera_avalon_pio
-#define KEY_BASE 0x4041060
+#define KEY_BASE 0x4041080
 #define KEY_BIT_CLEARING_EDGE_REGISTER 0
 #define KEY_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define KEY_CAPTURE 1
@@ -331,13 +331,13 @@
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys altera_avalon_sysid_qsys
-#define SYSID_QSYS_BASE 0x4041070
+#define SYSID_QSYS_BASE 0x4041090
 #define SYSID_QSYS_ID 0
 #define SYSID_QSYS_IRQ -1
 #define SYSID_QSYS_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_NAME "/dev/sysid_qsys"
 #define SYSID_QSYS_SPAN 8
-#define SYSID_QSYS_TIMESTAMP 1581449475
+#define SYSID_QSYS_TIMESTAMP 1585423257
 #define SYSID_QSYS_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -348,7 +348,7 @@
 
 #define ALT_MODULE_CLASS_timer altera_avalon_timer
 #define TIMER_ALWAYS_RUN 0
-#define TIMER_BASE 0x4041040
+#define TIMER_BASE 0x4041060
 #define TIMER_COUNTER_SIZE 32
 #define TIMER_FIXED_PERIOD 0
 #define TIMER_FREQ 100000000
@@ -365,5 +365,31 @@
 #define TIMER_TICKS_PER_SEC 1000
 #define TIMER_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER_TYPE "altera_avalon_timer"
+
+
+/*
+ * timestamp_timer configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_timestamp_timer altera_avalon_timer
+#define TIMESTAMP_TIMER_ALWAYS_RUN 0
+#define TIMESTAMP_TIMER_BASE 0x4041040
+#define TIMESTAMP_TIMER_COUNTER_SIZE 32
+#define TIMESTAMP_TIMER_FIXED_PERIOD 0
+#define TIMESTAMP_TIMER_FREQ 100000000
+#define TIMESTAMP_TIMER_IRQ 3
+#define TIMESTAMP_TIMER_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define TIMESTAMP_TIMER_LOAD_VALUE 99
+#define TIMESTAMP_TIMER_MULT 1.0E-6
+#define TIMESTAMP_TIMER_NAME "/dev/timestamp_timer"
+#define TIMESTAMP_TIMER_PERIOD 1
+#define TIMESTAMP_TIMER_PERIOD_UNITS "us"
+#define TIMESTAMP_TIMER_RESET_OUTPUT 0
+#define TIMESTAMP_TIMER_SNAPSHOT 1
+#define TIMESTAMP_TIMER_SPAN 32
+#define TIMESTAMP_TIMER_TICKS_PER_SEC 1000000
+#define TIMESTAMP_TIMER_TIMEOUT_PULSE_OUTPUT 0
+#define TIMESTAMP_TIMER_TYPE "altera_avalon_timer"
 
 #endif /* __SYSTEM_H_ */

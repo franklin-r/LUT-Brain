@@ -1,6 +1,6 @@
-14:56:38 **** Incremental Build of configuration Nios II for project LUTBrain_NIOS_bsp ****
+16:42:40 **** Incremental Build of configuration Nios II for project LUTBrain_NIOS_bsp ****
 make all 
 [BSP build complete]
 
-14:56:41 Build Finished (took 2s.641ms)
+16:42:42 Build Finished (took 2s.681ms)
 

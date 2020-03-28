@@ -22,13 +22,13 @@
 <td width="20%" bgcolor="#77BBFF">BSP Version:</td><td>default</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>11-Feb-2020 3:24:54 PM</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>Mar 28, 2020 4:41:13 PM</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1581452694977</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1585428073933</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated Location:</td><td>G:\poly\Cours\Hiver2020\ELE8307\Projet2020\SDRAM_Nios_Test\software\LUTBrain_NIOS_bsp</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated Location:</td><td>C:\Users\alexi\Documents\ELE8307\LUT-Brain\SDRAM_Nios_Test\software\LUTBrain_NIOS_bsp</td>
 </tr>
 </table>
 <br>
@@ -38,16 +38,19 @@
 <th align="left" width="20%">Slave Descriptor</th><th align="left" width="40%">Address Range</th><th align="left" width="20%">Size</th><th align="left" width="20%">Attributes</th>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>jtag_uart</td><td>0x04041078 - 0x0404107F</td><td>8</td><td class="listing">printable</td>
+<td>jtag_uart</td><td>0x04041098 - 0x0404109F</td><td>8</td><td class="listing">printable</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>sysid_qsys</td><td>0x04041070 - 0x04041077</td><td>8</td><td class="listing">&nbsp;</td>
+<td>sysid_qsys</td><td>0x04041090 - 0x04041097</td><td>8</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>key</td><td>0x04041060 - 0x0404106F</td><td>16</td><td class="listing">&nbsp;</td>
+<td>key</td><td>0x04041080 - 0x0404108F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>timer</td><td>0x04041040 - 0x0404105F</td><td>32</td><td class="listing">timer</td>
+<td>timer</td><td>0x04041060 - 0x0404107F</td><td>32</td><td class="listing">timer</td>
+</tr>
+<tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
+<td>timestamp_timer</td><td>0x04041040 - 0x0404105F</td><td>32</td><td class="listing">timer</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
 <td>ELE8307_VGA_0</td><td>0x04041000 - 0x0404103F</td><td>64</td><td class="listing">&nbsp;</td>
@@ -267,7 +270,7 @@
 <td width="20%">Default Value:</td><td>0</td>
 </tr>
 <tr>
-<td width="20%">Value:</td><td>0</td>
+<td width="20%">Value:</td><td>1</td>
 </tr>
 <tr>
 <td width="20%">Type:</td><td>Boolean</td>
@@ -1131,7 +1134,7 @@
 <td width="20%">Default Value:</td><td>-O0</td>
 </tr>
 <tr>
-<td width="20%">Value:</td><td>-O0</td>
+<td width="20%">Value:</td><td>-O3</td>
 </tr>
 <tr>
 <td width="20%">Type:</td><td>UnquotedString</td>
@@ -2076,7 +2079,7 @@
 <td width="20%">Default Value:</td><td>none</td>
 </tr>
 <tr>
-<td width="20%">Value:</td><td>none</td>
+<td width="20%">Value:</td><td>timestamp_timer</td>
 </tr>
 <tr>
 <td width="20%">Type:</td><td>UnquotedString</td>
