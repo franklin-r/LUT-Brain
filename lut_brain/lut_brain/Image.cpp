@@ -7,6 +7,9 @@
 
 #include "Image.h"
 
+int start = 1;  // Not really used, just an artefact to move to hardware ASM
+int done;       // Not really used, just an artefact to move to hardware ASM
+
 Image::Image() {
 	// TODO Auto-generated constructor stub
 	source_array = 0;
@@ -40,6 +43,38 @@ void Image::copy_block(int x, int y, int size, float* target) {
 			target[j * size + i] = (*source_pixel(x + i, y + j)) / 255.0;
 		}
 	}
+}
+
+void Image::copy_block_hard(int in_x, int in_y, int input_size, float* input_target) {
+	int x; int y; int size; float* target;
+	int i; int j;
+	float* MAR;
+
+	INIT:	if (start == 0) { goto INIT; }
+			else { done = 0; target = input_target; size = input_size; x = in_x; y = in_y; i = 0; j = 0; goto J1; }
+
+	J1:		if (j < size) { goto I1; }
+			else { done = 1; }
+
+	I1:		if (i < size) { MAR = target + (j * size + i); goto I2; }
+			else { j++; goto J1; }
+	
+	I2:		if (1) { *MAR = (*source_pixel(x + i, y + j)) / 255.0; i++; goto I1; }
+}
+
+void Image::copy_block_hard_opt(int in_x, int in_y, int input_size, float* input_target) {
+	int x; int y; int size; float* target;
+	int i; int j;
+	float* MAR;
+
+	INIT:	if (start == 0) { goto INIT; }
+			else { done = 0; target = input_target; size = input_size; x = in_x; y = in_y; i = 0; j = 0; MAR = target; goto J1; }
+
+	J1:		if (j < size) { goto I1; }
+			else { done = 1; }
+
+	I1:		if (i < size) { *MAR = (*source_pixel(x + i, y + j)) / 255.0; MAR = target + (j * size + i); i++; goto I1; }
+			else { j++; goto J1; }
 }
 
 /*******************************************************
