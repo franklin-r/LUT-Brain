@@ -16,6 +16,8 @@ public:
 	void load_values(int new_n_input, int new_n_neuron, int nipn, const unsigned char* LUT_data, const int* pos_data);
 	void buildAddress(float* source, const int* current_pos, int* LUT_Address);
 	void lutForward(int* LUT_Address);
+	void lutForward_ASM_hard(int *LUT_Address, int data);
+	void lutForward_ASM_hard_opti(int *LUT_Address, int data) ;
 	virtual ~NNLayer();
 
 	int n_input;
