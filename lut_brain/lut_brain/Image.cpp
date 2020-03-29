@@ -45,6 +45,8 @@ void Image::copy_block(int x, int y, int size, float* target) {
 	}
 }
 
+
+// Copy Block ASM functions by Daniel Dermont 2043595 //
 void Image::copy_block_hard(int in_x, int in_y, int input_size, float* input_target) {
 	int x; int y; int size; float* target;
 	int i; int j;
@@ -62,6 +64,7 @@ void Image::copy_block_hard(int in_x, int in_y, int input_size, float* input_tar
 	I2:		if (1) { *MAR = (*source_pixel(x + i, y + j)) / 255.0; i++; goto I1; }
 }
 
+// Copy Block ASM functions by Daniel Dermont 2043595 //
 void Image::copy_block_hard_opt(int in_x, int in_y, int input_size, float* input_target) {
 	int x; int y; int size; float* target;
 	int i; int j;

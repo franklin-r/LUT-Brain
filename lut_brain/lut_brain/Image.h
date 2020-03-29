@@ -24,6 +24,7 @@ public:
 
 	unsigned char * source_pixel(int x, int y);
 	void copy_block(int x, int y, int size, float * target);
+	// Copy Block ASM functions by Daniel Dermont 2043595 //
 	void copy_block_hard(int in_x, int in_y, int input_size, float * input_target);
 	void copy_block_hard_opt(int in_x, int in_y, int input_size, float * input_target);
 	Image * apply_NN(NN * network, int size, int pos);
