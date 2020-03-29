@@ -72,6 +72,40 @@ void NNLayer::buildAddress(float* source, const int* current_pos, int* LUT_Addre
 	}
 }
 
+void NNLayer::buildAddress_hard(float* source, const int* current_pos, int* LUT_Address) {
+	// Fonction à remplacer
+	int start;
+	int done;
+	int i, j;
+	int* LUT_Address_ptr, source_ptr;
+
+INIT:	if (start == 0) { goto INIT; }
+		else { done = 0;  i = 0; }
+
+S1:		if (i < n_neuron) { current_pos++; LUT_Address_ptr = LUT_Address + i; j = 0; goto S2; }
+		else { done = 1; return; }
+
+S2:		if (j < n_input_per_neuron) { if (source[*current_pos] != 0) *LUT_Address_ptr += (1 << j); current_pos++; j++; goto S2; }
+        else { i++; goto S1; }
+}
+
+void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, int* LUT_Address) {
+	// Fonction à remplacer
+	int start;
+	int done;
+	int i, j;
+	int* LUT_Address_ptr, source_ptr;
+
+INIT:	if (start == 0) { goto INIT; }
+		else { done = 0;  i = 0; }
+
+S1:		if (i < n_neuron) { current_pos++; LUT_Address_ptr = LUT_Address + i; j = 0; goto S2; }
+		else { done = 1; return; }
+
+S2:		if (j < n_input_per_neuron) { if (source[*current_pos] != 0) *LUT_Address_ptr += (1 << j); current_pos++; j++; goto S2; }
+		else { i++; goto S1; }
+}
+
 void NNLayer::lutForward(int* LUT_Address) {
 	// Fonction à remplacer
 	for (int i = 0; i < n_neuron; i++) {
