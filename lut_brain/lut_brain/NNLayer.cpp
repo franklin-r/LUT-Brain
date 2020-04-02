@@ -86,7 +86,8 @@ void NNLayer::buildAddress_hard(float* source, const int* current_pos, int* LUT_
 	//Control signals
 	int start = 1;
 	int done;
-	int address, data, read, write, waitrequest = 0;
+	int data, read, write, waitrequest = 0;
+	void* address;
 
 	//Local variables
 	int i, j;
@@ -100,17 +101,17 @@ S1:		if (i < n_neuron) { current_pos++; j = 0; goto S2; }
 		else { done = 1; return; }
 
 //Read data in current_pos
-S2:		if (1) { address = int(current_pos); read = 1; goto RDRQ1; }
+S2:		if (1) { address = (void*) current_pos; read = 1; goto RDRQ1; }
 
 //Read data in source + *current_pos
-S3:		if (1) { address = int(source + *current_pos); read = 1; goto RDRQ2; }
+S3:		if (1) { address = source + *current_pos; read = 1; goto RDRQ2; }
 
 //Check if input needs to be connected. Read data in LUT_Address + i.
-S4:		if (*(source + *current_pos) != 0) { address = int(LUT_Address + i); read = 1; goto RDRQ3; }
+S4:		if ((float*)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
 		else goto S6;
 
 //Read data in LUT_Address + i
-S5:		if (1) { address = int(LUT_Address + i); data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
+S5:		if (1) { address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
 
 // Check if all neuron inputs are connected
 S6:		if (j < n_input_per_neuron) { current_pos++; j++; goto S2; }
@@ -144,8 +145,8 @@ void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, 
 	//Control signals
 	int start = 1;
 	int done;
-	int address, data, read, write, waitrequest = 0;
-
+	int data, read, write, waitrequest = 0;
+	void* address;
 	//Local variables
 	int i, j;
 
@@ -154,26 +155,26 @@ INIT:	if (start == 0) { goto S1; }
 		else { write = 0; read = 0; done = 0;  i = 0; }
 
 //Check if all neurons are done
-S1:		if (i < n_neuron) { current_pos++; j = 0; address = int(current_pos); read = 1; goto RDRQ1;}
+S1:		if (i < n_neuron) { current_pos++; j = 0; address = (void*) current_pos; read = 1; goto RDRQ1;}
 		else { done = 1; return; }
 
 //Check if input needs to be connected. If so read data in LUT_Address + i.
-S4:		if (*(source + *current_pos) != 0) { address = int(LUT_Address + i); read = 1; goto RDRQ3; }
+S4:		if ((float *)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
 		else goto S6;
 
 // Check if all neuron inputs are connected
-S6:		if (j < n_input_per_neuron) { current_pos++; j++; address = int(current_pos); read = 1; goto RDRQ1;}
+S6:		if (j < n_input_per_neuron) { current_pos++; j++; address = (void *)current_pos; read = 1; goto RDRQ1;}
 		else { i++; goto S1; }
 
 // Wait for memory
 RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
-		else { /*Read *current_pos from data*/ address = int(source + *current_pos); goto RDRQ2; }
+		else { /*Read *current_pos from data*/ address = source + *current_pos; goto RDRQ2; }
 
 RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
 		else { /*Read *(source + *current_pos) from data*/ read = 0; goto S4; }
 
 RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
-		else { /*Read *(LUT_Address + i) from data*/ read = 0; address = int(LUT_Address + i); data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
+		else { /*Read *(LUT_Address + i) from data*/ read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
 
 WRRQ:   if (waitrequest == 1) { goto WRRQ; }
 		else { *(LUT_Address + i) += (1 << j); write = 0; goto S6; }
