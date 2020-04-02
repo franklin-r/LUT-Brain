@@ -80,7 +80,9 @@ void NNLayer::buildAddress_hard(float* source, const int* current_pos, int* LUT_
 						const int* current_pos
 						int*       LUT_Address
 	@Out 			: 	void
-	Note			: 	
+	Note			: 	!La fonction ne donne pas les mêmes résultats que le code original!
+	                    Il semble que dans l'état S4 la lecture de la donnée dans l'addresse
+						(source + *current_pos) ne donne pas la bonne sortie.
 	*/
 
 	//Control signals
@@ -106,7 +108,7 @@ S2:		if (1) { address = (void*) current_pos; read = 1; goto RDRQ1; }
 //Read data in source + *current_pos
 S3:		if (1) { address = source + *current_pos; read = 1; goto RDRQ2; }
 
-//Check if input needs to be connected. Read data in LUT_Address + i.
+//Check if input needs to be connected. Read data in LUT_Address + i. Without the cast to (float*) line throws exception 
 S4:		if ((float*)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
 		else goto S6;
 
@@ -139,7 +141,9 @@ void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, 
 						const int* current_pos
 						int* LUT_Address
 	@Out 			: 	Void
-	Note			:
+	Note			:   !La fonction ne donne pas les mêmes résultats que le code original!
+	                    Il semble que dans l'état S4 la lecture de la donnée dans l'addresse
+						(source + *current_pos) ne donne pas la bonne sortie.
 	*/
 
 	//Control signals
@@ -158,7 +162,7 @@ INIT:	if (start == 0) { goto S1; }
 S1:		if (i < n_neuron) { current_pos++; j = 0; address = (void*) current_pos; read = 1; goto RDRQ1;}
 		else { done = 1; return; }
 
-//Check if input needs to be connected. If so read data in LUT_Address + i.
+//Check if input needs to be connected. Read data in LUT_Address + i. Without the cast to (float*) line throws exception 
 S4:		if ((float *)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
 		else goto S6;
 
@@ -199,9 +203,9 @@ float * NNLayer::propagate(float * source) {
 	const int * current_pos = pos_array;
 	int *LUT_Address = new int[n_neuron] { 0 };
 
-	buildAddress(source, current_pos, LUT_Address);
-	//buildAddress_hard(source, current_pos, LUT_Address);
-	//buildAddress_hard_optimise(source, current_pos, LUT_Address);
+	buildAddress(source, current_pos, LUT_Address);                  // Code original
+	//buildAddress_hard(source, current_pos, LUT_Address);           // Test ASM hard
+	//buildAddress_hard_optimise(source, current_pos, LUT_Address);  // Test ASM hard optimisé
 	lutForward(LUT_Address);
 
 	delete LUT_Address;
