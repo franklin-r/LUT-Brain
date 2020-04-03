@@ -147,7 +147,7 @@ void NNLayer::lutForward_ASM_hard_opti(int *LUT_Address, int data) {
 	@Note			: 	Upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
 						Called in NNLayer::propagate()
 						The modification with the "non-optimized" version is the pre-computation of the
-						condition i < n_neuron
+						condition i + 1 < n_neuron
 	*/
 	
 	// Local variables for addresses
@@ -188,7 +188,7 @@ void NNLayer::lutForward_ASM_hard_opti(int *LUT_Address, int data) {
 										rd = 0; wr = 1; addr = value + i;
 										writedata = 1 & (*(LUT_array + i) >> (val_LUT_Address & 0x7));
 										value[i] = writedata;				// Only needed for the C++ code
-										T1 = (i < n_neuron); i = i + 1; goto S1;}
+										T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
 				else {goto S4;}
 }
 
