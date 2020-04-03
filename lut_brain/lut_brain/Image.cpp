@@ -47,18 +47,19 @@ void Image::copy_block(int x, int y, int size, float* target) {
 
 
 // Copy Block ASM functions by Daniel Dermont 2043595 //
-void Image::copy_block_hard(int in_x, int in_y, int input_size, float* input_target) {
+void Image::copy_block_optimise(int in_x, int in_y, int input_size, float* input_target) {
 	int x; int y; int size; float* target;
-	int address, data, read, write, waitrequest = 0;
+	void* address;
+	int data, read, write, waitrequest = 0;
 	int i; int j;
 	float* MAR;
 
 
-	INIT:		if (start == 0) { goto INIT; }
+	INIT:	if (start == 0) { goto INIT; }
 			else { done = 0; address = 0; data = 0; read = 0; write = 0; target = input_target; size = input_size; x = in_x; y = in_y; i = 0; j = 0; goto J1; }
 
-	J1:		if (j < size) { goto I1; }
-			else { done = 1; }
+	J1:		if (j < size) { i = 0;  goto I1; }
+			else { done = 1; return; }
 
 	I1:		if (i < size) { MAR = target + (j * size + i); goto I2; }
 			else { j++; goto J1; }
@@ -74,23 +75,7 @@ void Image::copy_block_hard(int in_x, int in_y, int input_size, float* input_tar
 			else {/* Write to new Image */ write = 0; i++; goto I1;}
 }
 
-// Copy Block ASM functions by Daniel Dermont 2043595 //
-/* void Image::copy_block_hard_opt(int in_x, int in_y, int input_size, float* input_target) {
-	int x; int y; int size; float* target;
-	int i; int j;
-	float* MAR;
 
-	INIT:	if (start == 0) { goto INIT; }
-			else { done = 0; target = input_target; size = input_size; x = in_x; y = in_y; i = 0; j = 0; MAR = target; goto J1; }
-
-	J1:		if (j < size) { goto I1; }
-			else { done = 1; }
-
-// CANT DO A READ AND A WRITE IN THE SAME STATE
-	I1:		if (i < size) { *MAR = (*source_pixel(x + i, y + j)) / 255.0; MAR = target + (j * size + i); i++; goto I1; }
-			else { j++; goto J1; }
-}
-*/
 /*******************************************************
  * Application d'un reseau de neuronnes a cette image.
  *
