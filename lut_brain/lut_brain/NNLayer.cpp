@@ -80,9 +80,7 @@ void NNLayer::buildAddress_hard(float* source, const int* current_pos, int* LUT_
 						const int* current_pos
 						int*       LUT_Address
 	@Out 			: 	void
-	Note			: 	!La fonction ne donne pas les mêmes résultats que le code original!
-	                    Il semble que dans l'état S4 la lecture de la donnée dans l'addresse
-						(source + *current_pos) ne donne pas la bonne sortie.
+	Note			: 	
 	*/
 
 	//Control signals
@@ -93,57 +91,56 @@ void NNLayer::buildAddress_hard(float* source, const int* current_pos, int* LUT_
 
 	//Local variables
 	int i, j;
+	int current_pos_index = 0;
 
 //Initialization
 INIT:	if (start == 0) { goto INIT; }                
 		else { write = 0; read = 0; done = 0; i = 0; goto S1; }
 
 //Check if all neurons are done
-S1:		if (i < n_neuron) { current_pos++; j = 0; goto S2; }
+S1:		if (i < n_neuron) {j = 0; goto S2; }
 		else { done = 1; return; }
 
-//Read data in current_pos
-S2:		if (1) { address = (void*) current_pos; read = 1; goto RDRQ1; }
+// Check if all neuron inputs are connected; Read data in current_pos
+S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
+		else { i++; goto S1; }
 
 //Read data in source + *current_pos
-S3:		if (1) { address = source + *current_pos; read = 1; goto RDRQ2; }
+S3:		if (1) {address = source + *(current_pos + current_pos_index); read = 1; goto RDRQ2; }
 
-//Check if input needs to be connected. Read data in LUT_Address + i. Without the cast to (float*) line throws exception 
-S4:		if ((float*)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
-		else goto S6;
+//Check if input needs to be connected.
+S4:		if (source[current_pos[current_pos_index]] != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
+		else { j++; current_pos_index++; goto S2; }
 
 //Read data in LUT_Address + i
 S5:		if (1) { address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
 
-// Check if all neuron inputs are connected
-S6:		if (j < n_input_per_neuron) { current_pos++; j++; goto S2; }
-        else { i++; goto S1; }
-
 // Wait for memory
+/*Read *current_pos from data*/
 RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
-		else { /*Read *current_pos from data*/ read = 0; goto S3; }
-	
-RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
-		else { /*Read *(source + *current_pos) from data*/ read = 0; goto S4; }
+		else { data = current_pos[current_pos_index];  read = 0; goto S3; }
 
+/*Read *(source + *current_pos) from data*/
+RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
+        else { data = source[current_pos[current_pos_index]]; read = 0; goto S4; }
+
+/*Read *(LUT_Address + i) from data*/
 RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
-        else { /*Read *(LUT_Address + i) from data*/ read = 0; goto S5;  }
+		else { data = *(LUT_Address + i); read = 0; goto S5; }
 
 WRRQ:   if (waitrequest == 1) { goto WRRQ; }
-        else { *(LUT_Address + i) += (1 << j); write = 0; goto S6; }
+        else { *(LUT_Address + i) += (1 << j); write = 0;  j++; current_pos_index++; goto S2; }
 }
 
 void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, int* LUT_Address) {
 	/*
 	@Author			: 	Louis-Normand ANG HOULE
 	@Description 	: 	Build addresses equivalent to neuron interconnects
-	@Args 			: 	float* source
+	@Args 			: 	float*     source
 						const int* current_pos
-						int* LUT_Address
-	@Out 			: 	Void
-	Note			:   !La fonction ne donne pas les mêmes résultats que le code original!
-	                    Il semble que dans l'état S4 la lecture de la donnée dans l'addresse
-						(source + *current_pos) ne donne pas la bonne sortie.
+						int*       LUT_Address
+	@Out 			: 	void
+	Note			:
 	*/
 
 	//Control signals
@@ -151,37 +148,43 @@ void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, 
 	int done;
 	int data, read, write, waitrequest = 0;
 	void* address;
+
 	//Local variables
 	int i, j;
+	int current_pos_index = 0;
 
 	//Initialization
 INIT:	if (start == 0) { goto INIT; }
-		else { write = 0; read = 0; done = 0;  i = 0; goto S1;}
+	else { write = 0; read = 0; done = 0; i = 0; goto S1; }
 
 //Check if all neurons are done
-S1:		if (i < n_neuron) { current_pos++; j = 0; address = (void*) current_pos; read = 1; goto RDRQ1;}
-		else { done = 1; return; }
+S1:		if (i < n_neuron) { j = 0; goto S2; }
+	else { done = 1; return; }
 
-//Check if input needs to be connected. Read data in LUT_Address + i. Without the cast to (float*) line throws exception 
-S4:		if ((float*)(source + *current_pos) != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
-		else goto S6;
-
-// Check if all neuron inputs are connected
-S6:		if (j < n_input_per_neuron) { current_pos++; j++; address = (void *)current_pos; read = 1; goto RDRQ1;}
+// Check if all neuron inputs are connected; Read data in current_pos
+S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
 		else { i++; goto S1; }
 
+//Check if input needs to be connected.
+S4:		if (source[current_pos[current_pos_index]] != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
+		else { j++; current_pos_index++; goto S2; }
+
 // Wait for memory
+/*Read *current_pos from data*/ //Read data in source + *current_pos
 RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
-		else { /*Read *current_pos from data*/ address = source + *current_pos; goto RDRQ2; }
+		else { data = current_pos[current_pos_index]; address = source + *(current_pos + current_pos_index); goto RDRQ2; }
 
+/*Read *(source + *current_pos) from data*/
 RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
-		else { /*Read *(source + *current_pos) from data*/ read = 0; goto S4; }
+		else { data = source[current_pos[current_pos_index]]; read = 0; goto S4; }
 
+/*Read *(LUT_Address + i) from data*/
 RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
-		else { /*Read *(LUT_Address + i) from data*/ read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
+		else { data = *(LUT_Address + i); read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ;}
 
 WRRQ:   if (waitrequest == 1) { goto WRRQ; }
-		else { *(LUT_Address + i) += (1 << j); write = 0; goto S6; }
+		else { *(LUT_Address + i) += (1 << j); write = 0;  j++; current_pos_index++; goto S2; }
+
 }
 
 void NNLayer::lutForward(int* LUT_Address) {
@@ -204,8 +207,8 @@ float * NNLayer::propagate(float * source) {
 	int *LUT_Address = new int[n_neuron] { 0 };
 
 	//buildAddress(source, current_pos, LUT_Address);                // Code original
-	buildAddress_hard(source, current_pos, LUT_Address);           // Test ASM hard
-	//buildAddress_hard_optimise(source, current_pos, LUT_Address);  // Test ASM hard optimisé
+	//buildAddress_hard(source, current_pos, LUT_Address);           // Test ASM hard
+	buildAddress_hard_optimise(source, current_pos, LUT_Address);  // Test ASM hard optimisé
 	lutForward(LUT_Address);
 
 	delete LUT_Address;
