@@ -128,14 +128,28 @@ int main(int argc, char **argv)
 	my_image.printToFile(0, 0, "output_data/input_image");
 	printf("Start processing ...\r\n");
 
+	/*
 	for (int i=0;i<10;i++) {
 		clock_t time1 = clock();
 		Image * result_image = my_image.apply_NN(&network, MATRIX_SIZE, i);
 		clock_t time2 = clock();
 		result_image->printToFile(0, 0, ("output_data/result_" + std::to_string(i)));
 		delete result_image;
-		printf("done in %d ms\r\n",(time2-time1));
+		printf("done in %d ms\r\n",(int)(time2-time1));
 	}
+	*/
+	
+	clock_t time1 = clock();
+	Image ** result_images = my_image.apply_NN(&network, MATRIX_SIZE);
+	clock_t time2 = clock();
+	printf("done in %d ms\r\n",(int)(time2-time1));
+	
+	for (int i = 0;i < 10; i++) {
+		result_images[i]->printToFile(0, 0, ("output_data/result_" + std::to_string(i)));
+		delete result_images[i];
+	}
+	delete result_images;
+	
 
 	return 0;
 }

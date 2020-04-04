@@ -9,7 +9,7 @@
 #define IMAGE_H_
 
 #include "NN.h"
-#include "io.h"
+//#include <io.h>
 #include "stdlib.h"
 #include "stdio.h"
 #include "data.h"
@@ -24,7 +24,7 @@ public:
 
 	unsigned char * source_pixel(int x, int y);
 	void copy_block(int x, int y, int size, float * target);
-	Image * apply_NN(NN * network, int size, int pos);
+	Image ** apply_NN(NN * network, int size);
 	void printToFile(int x, int y, std::string file_name);
 	void print();
 	~Image();
