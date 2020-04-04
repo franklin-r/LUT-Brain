@@ -148,6 +148,7 @@ void NNLayer::lutForward_ASM_hard_opti(int *LUT_Address, int data) {
 						Called in NNLayer::propagate()
 						The modification with the "non-optimized" version is the pre-computation of the
 						condition i + 1 < n_neuron
+						The bug correction was to change T1 = (i < n_neuron) to T1 = (i + 1 < n_neuron)
 	*/
 	
 	// Local variables for addresses
@@ -205,8 +206,8 @@ float * NNLayer::propagate(float * source) {
 
 	buildAddress(source, current_pos, LUT_Address);
 	//lutForward(LUT_Address);
-	//lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
-	lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
+	lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
+	//lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
 
 	delete LUT_Address;
 	if (my_debug) print();
