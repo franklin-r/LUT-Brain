@@ -111,7 +111,6 @@ Image ** Image::apply_NN(NN * network, int size) {
 		for (int x=0; x<=length-size; x++) {
 			/* Appliquer le reseau sur un sous-bloc de l'image */
 			copy_block(x, y, size, source);
-			//copy_block_ASM_hard(x, y, size, source);
 			//copy_block_optimise(x, y, size, source);
 			network->propagate(source);
 

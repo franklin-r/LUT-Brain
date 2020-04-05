@@ -242,10 +242,10 @@ void NNLayer::lutForward_ASM_hard(int *LUT_Address, int data) {
 										goto S4;}	
 				else {goto S3;}
 				
-				// LUT_array[i] = val_LUT_array = readdata	
-	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[i];			// Only needed for the C++ code
+				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
+	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
 										rd = 0; wr = 1; addr = value + i;
-										writedata = 1 & (*(LUT_array + i) >> (val_LUT_Address & 0x7));
+										writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
 										value[i] = writedata;				// Only needed for the C++ code
 										i = i + 1; goto S1;}
 				else {goto S4;}
@@ -299,10 +299,10 @@ void NNLayer::lutForward_ASM_hard_opti(int *LUT_Address, int data) {
 										goto S4;}	
 				else {goto S3;}
 				
-				// LUT_array[i] = val_LUT_array = readdata	
-	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[i];			// Only needed for the C++ code
+				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
+	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];	// Only needed for the C++ code
 										rd = 0; wr = 1; addr = value + i;
-										writedata = 1 & (*(LUT_array + i) >> (val_LUT_Address & 0x7));
+										writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
 										value[i] = writedata;				// Only needed for the C++ code
 										T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
 				else {goto S4;}
@@ -319,21 +319,12 @@ float * NNLayer::propagate(float * source) {
 	const int * current_pos = pos_array;
 	int *LUT_Address = new int[n_neuron] { 0 };
 
-<<<<<<< HEAD
 	// Test section
-	//buildAddress(source, current_pos, LUT_Address);                                 // Code original
-	buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
+	buildAddress(source, current_pos, LUT_Address);                                 // Code original
+	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
 	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
 	//lutForward(LUT_Address);                                                          // Code original
 	lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
-=======
-  // Test section
-  //buildAddress(source, current_pos, LUT_Address);                                 // Code original
-	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
-	buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
-	lutForward(LUT_Address);                                                          // Code original
-    //lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
->>>>>>> 13cc19fb9da4f30c793081ade99ac0433ff9c7f4
 	//lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));  // Test ASM hard optimisé
 
 
