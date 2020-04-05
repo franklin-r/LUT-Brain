@@ -321,10 +321,10 @@ float * NNLayer::propagate(float * source) {
 
   // Test section
   //buildAddress(source, current_pos, LUT_Address);                                 // Code original
-	buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
-	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
-	//lutForward(LUT_Address);                                                          // Code original
-  lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
+	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
+	buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
+	lutForward(LUT_Address);                                                          // Code original
+    //lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
 	//lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));  // Test ASM hard optimisé
 
 
