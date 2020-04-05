@@ -92,11 +92,16 @@ void Image::copy_block_optimise(int in_x, int in_y, int input_size, float* input
  * image a l'entree de ce reseau de neuronnes.
  *
  *******************************************************/
-Image * Image::apply_NN(NN * network, int size, int pos) {
+Image ** Image::apply_NN(NN * network, int size) {
 	//float source[size*size];
 	float * source = new float[size*size];
-	Image * result = new Image(length-size+1,height-size+1, false);
-
+	//Image * result = new Image(length-size+1,height-size+1, false);
+	Image **tab_result = (Image**)malloc(network->layer[network->n_layer-1].n_neuron * sizeof(Image*));
+	
+	for(int i = 0; i < network->layer[network->n_layer-1].n_neuron; i++) {
+		tab_result[i] = new Image(length-size+1, height-size+1, false);
+	}
+	
 	printf("Processing line ");
 	for (int y=0; y<=height-size; y++) {
 		printf("%i,",y);
@@ -106,16 +111,24 @@ Image * Image::apply_NN(NN * network, int size, int pos) {
 			network->propagate(source);
 
 			/* Stocker les bons/meilleurs matchs */
+			/*
 			unsigned char pixel;
 			pixel = 255*(network->layer[network->n_layer-1].value[pos]);
 			*(result->source_pixel(x,y)) = pixel;
+			*/
+			unsigned char pixel;
+			for(int k = 0; k < network->layer[network->n_layer-1].n_neuron; k++) {
+				pixel = 255*(network->layer[network->n_layer-1].value[k]);
+				//*(result->source_pixel(x,y)) = pixel;
+				*(tab_result[k]->source_pixel(x,y)) = pixel;
+			}
 		}
 	}
 
 	delete source;
 
 	printf("\r\n");
-	return result;
+	return tab_result;
 }
 
 /**********************************************************
