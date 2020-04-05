@@ -110,8 +110,8 @@ Image ** Image::apply_NN(NN * network, int size) {
 		printf("%i,",y);
 		for (int x=0; x<=length-size; x++) {
 			/* Appliquer le reseau sur un sous-bloc de l'image */
-			copy_block(x, y, size, source);
-			//copy_block_optimise(x, y, size, source);
+			//copy_block(x, y, size, source);
+			copy_block_optimise(x, y, size, source);
 			network->propagate(source);
 
 			/* Stocker les bons/meilleurs matchs */
