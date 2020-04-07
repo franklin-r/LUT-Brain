@@ -19,8 +19,12 @@ public:
 	void buildAddress_hard_optimise(float* source, const int* current_pos, int* LUT_Address);
 	void lutForward(int* LUT_Address);
 	void lutForward_ASM_hard(int *LUT_Address, int data);
+	void lutForward_ASM_hard2(const unsigned char *dataa, float *datab, char n);		// Overload
+	void lutForward_ASM_hard2(int *dataa, int datab, char n);							// Overload
 	void lutForward_ASM_hard_opti(int *LUT_Address, int data) ;
-	virtual ~NNLayer();
+	void lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab, char n);	// Overload
+	void lutForward_ASM_hard_opti2(int *dataa, int datab, char n);						// Overload
+	virtual ~NNLayer();	
 
 	int n_input;
 	int n_neuron;
