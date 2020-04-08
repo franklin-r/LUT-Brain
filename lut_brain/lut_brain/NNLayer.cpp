@@ -195,60 +195,47 @@ WRRQ:   if (waitrequest == 1) { goto WRRQ; }
 
 }
 
-void buildAddress_ctrl(int periphAddress, int data) {
+unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int datab) {
     /*
 	@Author			: 	Louis-Normand ANG HOULE
 	@Description 	: 	Build addresses equivalent to neuron interconnects
-	@Args 			:   periphAddress
-	                    data
-	@Out 			: 	void
+	@Args 			:   n     
+	                    dataa 
+						datab
+
+	@Out 			: 	unsigned int return
 	Note			:
 	*/
 
 	//Input data / Registers
-	static int n_neuron;             // periphAddress + 0
-	static int n_input_per_neuron;   // periphAddress + 1
-	static float* source;            // periphAddress + 2
-	static const int* current_pos;   // periphAddress + 3
-	static int* LUT_Address;         // periphAddress + 4
+	static int n_neuron;             //
+	static int n_input_per_neuron;   //
+	static float* source;            //
+	static int* LUT_Address;         //
+	static const int* current_pos;   //
 
 	//Output signal
-	int periphWait = 0;
+	int done;
+	int result;
 
 	//Control signals
 	int read, write, waitrequest = 0;
+	int data;
 	void* address;
 
 	//Local variables
 	int i, j;
 	int current_pos_index = 0;
 
-//Initialization
-INIT:	if (periphAddress > 4)  {return; }
-		else { periphWait = 1;  goto WRPRM; }
-
-//Write parameters
-WRPRM:  if (periphAddress != 4) {
-			switch (periphAddress) {
-			case 0: n_neuron = data;
-				break;
-			case 1: n_input_per_neuron = data; 
-				break;
-			case 2: source = (float*)data; 
-				break;
-			case 3: current_pos = (int*)data;
-				break;
-			default:
-				break;
-			}
-	    periphWait = 0;
-		return;
-		}
-		else { LUT_Address = (int*)data;  write = 0; read = 0; i = 0; goto S1; }
+//Initialization/Write parameters
+INIT:	if		(n == 0) { n_neuron = dataa; n_input_per_neuron = datab; done = 1; return result = 0; }
+		else if (n == 1) { source = (float*)dataa; LUT_Address = (int*)datab; done = 1; return result = 0; }
+		else if (n == 2) { current_pos = (const int*)dataa;  done = 0;  write = 0; read = 0; i = 0; goto S1; }
+		else { return result = 1; }
 
 //Check if all neurons are done
 S1:		if (i < n_neuron) { j = 0; goto S2; }
-		else { periphWait = 0; return; }
+		else { done = 1; return result = 0; }
 
 // Check if all neuron inputs are connected; Read data in current_pos
 S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
@@ -406,11 +393,9 @@ float * NNLayer::propagate(float * source) {
 	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
 	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
 
-	buildAddress_ctrl(0, n_neuron);
-	buildAddress_ctrl(1, n_input_per_neuron);
-	buildAddress_ctrl(2, (int) source);
-	buildAddress_ctrl(3, (int) current_pos);
-	buildAddress_ctrl(4, (int) LUT_Address);
+	buildAddress_ctrl(0, n_neuron, n_input_per_neuron);
+	buildAddress_ctrl(1, (int)source, (int) LUT_Address);
+	buildAddress_ctrl(2, (int)current_pos, 0);
 
 	//lutForward(LUT_Address);                                                          // Code original
 	//lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  

@@ -9,7 +9,7 @@
 #define NNLAYER_H_
 
 
-void buildAddress_ctrl(int periphAddress, int data);
+unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int datab);
 
 class NNLayer {
 public:
