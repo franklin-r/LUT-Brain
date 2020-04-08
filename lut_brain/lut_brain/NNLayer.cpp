@@ -327,7 +327,8 @@ void NNLayer::lutForward_ASM_hard2(const unsigned char *dataa, float *datab, cha
 	*/
 	
 	// Local variables for the input data
-	int n_neuron, LUT_size;
+	int n_neuron = 10, LUT_size = 10;			// They are both initialized in this case because 
+												// they are not affected a value in this function
 	
 	// Local addresses
 	static const unsigned char *l_LUT_array;
@@ -336,8 +337,10 @@ void NNLayer::lutForward_ASM_hard2(const unsigned char *dataa, float *datab, cha
 	//int *l_LUT_Address;
 	
 	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
+	int i, tmp;
+	/* Below is commented for the purpose of C++ compilation */
+	//int val_LUT_Address;
+	//char val_LUT_array;
 	
 	// Ouptut
 	int result;
@@ -347,7 +350,8 @@ void NNLayer::lutForward_ASM_hard2(const unsigned char *dataa, float *datab, cha
 						l_LUT_array = dataa; l_value = datab;
 						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
 						//l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF;
-						result = 0; goto S1;}
+						result = 0; goto S0;}
+	
 	
 	S0		:	if(n == 0) {i = n_neuron; goto S1;}			// We already have saved the addresses and we can exit by setting i 
 															// to n_neuron which then meets the return condition
@@ -420,7 +424,7 @@ void NNLayer::lutForward_ASM_hard2(int *dataa, int datab, char n) {
 						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
 						//l_LUT_array = dataa; l_value = datab;
 						l_LUT_Address = dataa; n_neuron = datab >> 16; LUT_size = datab & 0xFFFF;
-						result = 0; goto S1;}
+						result = 0; goto S0;}
 	
 	S0		:	if(n == 0) {i = n_neuron; goto S1;}			// We already have saved the addresses and we can exit by setting i 
 															// to n_neuron which then meets the return condition
@@ -473,7 +477,8 @@ void NNLayer::lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab
 	*/
 	
 	// Local variables for the input data
-	int n_neuron, LUT_size;
+	int n_neuron = 10, LUT_size = 10;							// We already have saved the addresses and we can exit by setting i 
+																// to n_neuron which then meets the return condition
 	
 	// Local addresses
 	static const unsigned char *l_LUT_array;
@@ -482,8 +487,10 @@ void NNLayer::lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab
 	//int *l_LUT_Address;
 	
 	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
+	int i, tmp;
+	/* Below is commented for the purpose of C++ compilation */
+	//int val_LUT_Address;
+	//char val_LUT_array;
 	
 	// Test condition
 	int T0, T1;
@@ -496,7 +503,7 @@ void NNLayer::lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab
 						l_LUT_array = dataa; l_value = datab;
 						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
 						//l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF;
-						T0 = (n == 0); result = 0; goto S1;}
+						T0 = (n == 0); result = 0; goto S0;}
 	
 	S0		:	if(T0) {i = n_neuron; T1 = 1; goto S1;}			// We already have saved the addresses and we can exit by setting i 
 																// to n_neuron which then meets the return condition
@@ -572,7 +579,7 @@ void NNLayer::lutForward_ASM_hard_opti2(int *dataa, int datab, char n) {
 						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
 						//l_LUT_array = dataa; l_value = datab;
 						l_LUT_Address = dataa; n_neuron = datab >> 16; LUT_size = datab & 0xFFFF;
-						T0 = (n == 0);result = 0; goto S1;}
+						T0 = (n == 0); result = 0; goto S0;}
 	
 	S0		:	if(T0) {i = n_neuron; T1 = 1; goto S1;}			// We already have saved the addresses and we can exit by setting i 
 																// to n_neuron which then meets the return condition
