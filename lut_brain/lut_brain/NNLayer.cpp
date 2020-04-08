@@ -213,16 +213,16 @@ float * NNLayer::propagate(float * source) {
 
 	// Test section
 	buildAddress(source, current_pos, LUT_Address);         	// Code original
-	//lutForward(LUT_Address);                       				// Code original
+	//lutForward(LUT_Address);                       			// Code original
 	
 	if (n == 0) {
 		lutForward_ASM_hard(n, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_array)), static_cast<int>(reinterpret_cast<uintptr_t>(value)));
-		//lutForward_ASM_hard_opti2(LUT_array, value, n);
+		//lutForward_ASM_hard_opti(n, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_array)), static_cast<int>(reinterpret_cast<uintptr_t>(value)));
 		n = 1;
 	}
 	else {
 		lutForward_ASM_hard(n, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_Address)), ((int)n_neuron << 16) | ((int)LUT_size & 0xFFFF));
-		//lutForward_ASM_hard_opti2(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF), n);
+		//lutForward_ASM_hard_opti(n, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_Address)), ((int)n_neuron << 16) | ((int)LUT_size & 0xFFFF));
 	}
 	
 	delete LUT_Address;
