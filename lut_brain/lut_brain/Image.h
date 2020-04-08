@@ -16,6 +16,8 @@
 #include <iostream>
 #include <fstream>
 
+void copy_block_optimise_mod(int x, int y, int size, float* target);
+
 class Image {
 public:
 	Image();

@@ -44,49 +44,126 @@ void Image::copy_block(int x, int y, int size, float* target) {
 
 // Copy Block ASM functions by Daniel Dermont 2043595 //
 void Image::copy_block_optimise(int x, int y, int size, float* target) {
+	
+	// Local variables for the input data
+	
+	// Variables
+	int start = 1, done, read, write, readdata, writedata, waitrequest = 0;
+	void *address;
+	int i, j;
+	
+	// Ouptut
+	int result;
+	
+	
+	INIT 	:	if(start == 0) {goto INIT;}
+			else {done = 0; read = 0; write = 0; address = 0; writedata = 0; j = 0;
+					result = 0; goto S1;}
+						
+	S1	:	if(j < size) {i = 0; goto S2;}
+			else {done = 1; return;}
+				
+		S2:	if (i < size) { read = 1; goto S3; }
+			else {j += 1; goto S1;}
+													
+	S3 	:	if(waitrequest == 0) {read = 0; write = 1; 
+						address = source_array + ((y + j) * length + (x + i));
+						goto S4;}
+			else {goto S3;}
+				
+	S4	:	if(waitrequest == 0) {read = 0; write = 0; 
+						writedata = *(source_array + ((y + j) * length + (x + i))) / 255;
+						address = target + (j * size + i); 
+						target[j * size + i] = writedata;		// Unnecessary in the VHDL
+						i += 1;
+						goto S2;}	
+			else {goto S4;}
+}
+
+
+// Copy Block ASM functions by Daniel Dermont 2043595 //
+void Image::copy_block_optimise(int x, int y, int size, float* target) {
+	
+	// Local variables for the input data
+	
+	// Variables
+	int start = 1, done, read, write, readdata, writedata, waitrequest = 0;
+	void *address;
+	int i, j;
+	
+	// Ouptut
+	int result;
+	
+	
+	INIT 	:	if(start == 0) {goto INIT;}
+			else {done = 0; read = 0; write = 0; address = 0; writedata = 0; j = 0;
+					result = 0; goto S1;}
+						
+	S1	:	if(j < size) {i = 0; goto S2;}
+			else {done = 1; return;}
+				
+		S2:	if (i < size) { read = 1; goto S3; }
+			else {j += 1; goto S1;}
+													
+	S3 	:	if(waitrequest == 0) {read = 0; write = 1; 
+						address = source_array + ((y + j) * length + (x + i));
+						goto S4;}
+			else {goto S3;}
+				
+	S4	:	if(waitrequest == 0) {read = 0; write = 0; 
+						writedata = *(source_array + ((y + j) * length + (x + i))) / 255;
+						address = target + (j * size + i); 
+						target[j * size + i] = writedata;		// Unnecessary in the VHDL
+						i += 1;
+						goto S2;}	
+			else {goto S4;}
+}
+
+// Copy Block ASM functions by Daniel Dermont 2043595 //
+void copy_block_optimise_mod(int x, int y, int size, float* target) {
 
 	// Local variables for the input data
+	int length = IMAGE_LENGTH;
+	int height = IMAGE_HEIGHT;
 
 	// Variables
 	int start = 1, done, read, write, readdata, writedata, waitrequest = 0;
 	void* address;
 	int i, j;
 
-	// Ouptut
+	// Output
 	int result;
 
 
 INIT:	if (start == 0) { goto INIT; }
-else {
-	done = 0; read = 0; write = 0; address = 0; writedata = 0; j = 0;
-	result = 0; goto S1;
-}
+		else {
+			done = 0; read = 0; write = 0; address = 0; writedata = 0; j = 0;
+			result = 0; goto S1;
+		}
 
 S1:	if (j < size) { i = 0; goto S2; }
-else { done = 1; return; }
+	else { done = 1; return; }
 
-S2:	if (i < size) { goto S3; }
-else { j += 1; goto S1; }
+S2:	if (i < size) { read = 1; goto S3; }
+	else { j += 1; goto S1; }
 
 S3:	if (waitrequest == 0) {
-read = 1; write = 0;
-address = source_array + ((y + j) * length + (x + i));
-goto S4;
-}
-else { goto S3; }
+		read = 0; write = 1;
+		address = source_array + ((y + j) * length + (x + i));
+		goto S4;
+	}
+	else { goto S3; }
 
 S4:	if (waitrequest == 0) {
-read = 0; write = 1;
-writedata = *(source_array + ((y + j) * length + (x + i))) / 255;
-address = target + (j * size + i);
-target[j * size + i] = writedata;		// Unnecessary in the VHDL
-i += 1;
-goto S2;
+		read = 0; write = 0;
+		writedata = *(source_array + ((y + j) * length + (x + i))) / 255;
+		address = target + (j * size + i);
+		target[j * size + i] = writedata;		// Unnecessary in the VHDL
+		i += 1;
+		goto S2;
+	}
+	else { goto S4; }
 }
-else { goto S4; }
-}
-
-
 
 /*******************************************************
  * Application d'un reseau de neuronnes a cette image.
