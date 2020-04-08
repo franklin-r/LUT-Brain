@@ -8,6 +8,9 @@
 #ifndef NNLAYER_H_
 #define NNLAYER_H_
 
+
+void buildAddress_ctrl(int periphAddress, int data);
+
 class NNLayer {
 public:
 	NNLayer();
@@ -17,6 +20,7 @@ public:
 	void buildAddress(float* source, const int* current_pos, int* LUT_Address);
 	void buildAddress_hard(float* source, const int* current_pos, int* LUT_Address);
 	void buildAddress_hard_optimise(float* source, const int* current_pos, int* LUT_Address);
+
 	void lutForward(int* LUT_Address);
 	void lutForward_ASM_hard(int *LUT_Address, int data);
 	void lutForward_ASM_hard_opti(int *LUT_Address, int data) ;
