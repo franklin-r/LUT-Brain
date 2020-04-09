@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -g --std=c++11
-OBJECTS = main.o Image.o NN.o NNLayer.o
+OBJECTS = main.o Image.o NN.o NNLayer.o asm.o
 
 all : main
 
