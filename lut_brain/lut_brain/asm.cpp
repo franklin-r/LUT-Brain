@@ -30,7 +30,7 @@ unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned in
 	// Local addresses
 	static const unsigned char *l_LUT_array;
 	static float *l_value;
-	int *l_LUT_Address;
+	static int *l_LUT_Address;
 	
 	// Variables
 	int i, tmp, val_LUT_Address;
@@ -103,7 +103,7 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 	// Local addresses
 	static const unsigned char *l_LUT_array;
 	static float *l_value;
-	int *l_LUT_Address;
+	static int *l_LUT_Address;
 	
 	// Variables
 	int i, tmp, val_LUT_Address;
