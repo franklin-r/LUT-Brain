@@ -16,6 +16,8 @@
 #include <iostream>
 #include <fstream>
 
+unsigned int copy_block_ctrl(unsigned int n, unsigned int dataa, unsigned int datab);
+
 class Image {
 public:
 	Image();

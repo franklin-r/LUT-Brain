@@ -156,11 +156,11 @@ void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, 
 
 	//Initialization
 INIT:	if (start == 0) { goto INIT; }
-	else { write = 0; read = 0; done = 0; i = 0; goto S1; }
+		else { write = 0; read = 0; done = 0; i = 0; goto S1; }
 
 //Check if all neurons are done
 S1:		if (i < n_neuron) { j = 0; goto S2; }
-	else { done = 1; return; }
+		else { done = 1; return; }
 
 // Check if all neuron inputs are connected; Read data in current_pos
 S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
@@ -188,6 +188,75 @@ WRRQ:   if (waitrequest == 1) { goto WRRQ; }
 
 }
 
+unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int datab) {
+    /*
+	@Author			: 	Louis-Normand ANG HOULE
+	@Description 	: 	Build addresses equivalent to neuron interconnects
+	@Args 			:   n     
+	                    dataa 
+						datab
+
+	@Out 			: 	unsigned int return
+	Note			:
+	*/
+
+	//Input data / Registers
+	static int n_neuron;             //
+	static int n_input_per_neuron;   //
+	static float* source;            //
+	static int* LUT_Address;         //
+	static const int* current_pos;   //
+
+	//Output signal
+	int done;
+	int result;
+
+	//Control signals
+	int read, write, waitrequest = 0;
+	int data;
+	void* address;
+
+	//Local variables
+	int i, j;
+	int current_pos_index = 0;
+
+//Initialization/Write parameters
+INIT:	if		(n == 0) { n_neuron = dataa; n_input_per_neuron = datab; done = 1; return result = 0; }
+		else if (n == 1) { source = (float*)dataa; LUT_Address = (int*)datab; done = 1; return result = 0; }
+		else if (n == 2) { current_pos = (const int*)dataa;  done = 0;  write = 0; read = 0; i = 0; goto S1; }
+		else { return result = 1; }
+
+//Check if all neurons are done
+S1:		if (i < n_neuron) { j = 0; goto S2; }
+		else { done = 1; return result = 0; }
+
+// Check if all neuron inputs are connected; Read data in current_pos
+S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
+		else { i++; goto S1; }
+
+//Check if input needs to be connected.
+S4:		if (source[current_pos[current_pos_index]] != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
+		else { j++; current_pos_index++; goto S2; }
+
+// Wait for memory
+/*Read *current_pos from data*/ //Read data in source + *current_pos
+RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
+		else { data = current_pos[current_pos_index]; address = source + *(current_pos + current_pos_index); goto RDRQ2; }
+
+/*Read *(source + *current_pos) from data*/
+RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
+		else { data = source[current_pos[current_pos_index]]; read = 0; goto S4; }
+
+/*Read *(LUT_Address + i) from data*/
+RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
+		else { data = *(LUT_Address + i); read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ;}
+
+WRRQ:   if (waitrequest == 1) { goto WRRQ; }
+		else { *(LUT_Address + i) += (1 << j); write = 0;  j++; current_pos_index++; goto S2; }
+}
+
+
+
 void NNLayer::lutForward(int* LUT_Address) {
 	// Fonction à remplacer
 	for (int i = 0; i < n_neuron; i++) {
@@ -195,9 +264,6 @@ void NNLayer::lutForward(int* LUT_Address) {
 		if (my_debug) printf("LUT%i[%i] = %f\r\n", i, LUT_Address[i], value[i]);
 	}
 }
-
-
-
 
 float * NNLayer::propagate(float * source) {
 	// TODO Auto-generated constructor stub
@@ -212,8 +278,18 @@ float * NNLayer::propagate(float * source) {
 	int *LUT_Address = new int[n_neuron] { 0 };
 
 	// Test section
-	buildAddress(source, current_pos, LUT_Address);         	// Code original
-	//lutForward(LUT_Address);                       			// Code original
+
+	//buildAddress(source, current_pos, LUT_Address);                                 // Code original
+	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
+	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                   // Test ASM hard optimisé
+
+	buildAddress_ctrl(0, n_neuron, n_input_per_neuron);
+	buildAddress_ctrl(1, (int)source, (int) LUT_Address);
+	buildAddress_ctrl(2, (int)current_pos, 0);
+
+	//lutForward(LUT_Address);                                                          // Code original
+	//lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
+	//lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));    // Test ASM hard optimisé
 
 	//lutForward_ASM_hard(0, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_array)), static_cast<int>(reinterpret_cast<uintptr_t>(value)));
 	lutForward_ASM_hard_opti(0, static_cast<int>(reinterpret_cast<uintptr_t>(LUT_array)), static_cast<int>(reinterpret_cast<uintptr_t>(value)));
