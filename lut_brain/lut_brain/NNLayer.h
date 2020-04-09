@@ -9,8 +9,6 @@
 #define NNLAYER_H_
 
 
-unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int datab);
-
 class NNLayer {
 public:
 	NNLayer();

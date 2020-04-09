@@ -1,3 +1,124 @@
+
+#include "asm.h"
+
+// Copy Block ASM functions by Daniel Dermont 2043595 //
+unsigned int copy_block_ctrl(unsigned int n, unsigned int dataa, unsigned int datab) {
+
+	// Input data
+	static int size;
+	static float* target;
+	static int length;
+	static unsigned char* source_array;
+
+	// Variables
+	int x, y;
+	int start = 1, done, read, write, readdata, writedata, waitrequest = 0;
+	void* address;
+	int i, j;
+
+	// Output
+	int result;
+
+
+INIT:	if		(n == 0) { size = dataa; target = (float*)datab; return done = 1; }
+		else if (n == 1) { length = dataa; source_array = (unsigned char*)datab; return done = 1; }
+		else {
+			x = dataa; y = datab;
+			done = 0; read = 0; write = 0; address = 0; writedata = 0; j = 0;
+			result = 0; goto S1;
+		}
+
+S1:	if (j < size) { i = 0; goto S2; }
+	else { return done = 1; }
+
+S2:	if (i < size) { read = 1; goto S3; }
+	else { j += 1; goto S1; }
+
+S3:	if (waitrequest == 0) {
+		read = 0; write = 1;
+		address = source_array + ((y + j) * length + (x + i));
+		goto S4;
+	}
+	else { goto S3; }
+
+S4:	if (waitrequest == 0) {
+		read = 0; write = 0;
+		writedata = *(source_array + ((y + j) * length + (x + i))) / 255;
+		address = target + (j * size + i);
+		target[j * size + i] = writedata;		// Unnecessary in the VHDL
+		i += 1;
+		goto S2;
+	}
+	else { goto S4; }
+}
+
+unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int datab) {
+	/*
+	@Author			: 	Louis-Normand ANG HOULE
+	@Description 	: 	Build addresses equivalent to neuron interconnects
+	@Args 			:   n
+						dataa
+						datab
+
+	@Out 			: 	unsigned int return
+	Note			:
+	*/
+
+	//Input data / Registers
+	static int n_neuron;             //
+	static int n_input_per_neuron;   //
+	static float* source;            //
+	static int* LUT_Address;         //
+	static const int* current_pos;   //
+
+	//Output signal
+	int done;
+	int result;
+
+	//Control signals
+	int read, write, waitrequest = 0;
+	int data;
+	void* address;
+
+	//Local variables
+	int i, j;
+	int current_pos_index = 0;
+
+	//Initialization/Write parameters
+INIT:	if		(n == 0) { n_neuron = dataa; n_input_per_neuron = datab; done = 1; return result = 0; }
+		else if (n == 1) { source = (float*)dataa; LUT_Address = (int*)datab; done = 1; return result = 0; }
+		else if (n == 2) { current_pos = (const int*)dataa;  done = 0;  write = 0; read = 0; i = 0; goto S1; }
+		else { return result = 1; }
+
+//Check if all neurons are done
+S1:		if (i < n_neuron) { j = 0; goto S2; }
+		else { done = 1; return result = 0; }
+
+// Check if all neuron inputs are connected; Read data in current_pos
+S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
+		else { i++; goto S1; }
+
+//Check if input needs to be connected.
+S4:		if (source[current_pos[current_pos_index]] != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
+		else { j++; current_pos_index++; goto S2; }
+
+// Wait for memory
+/*Read *current_pos from data*/ //Read data in source + *current_pos
+RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
+		else { data = current_pos[current_pos_index]; address = source + *(current_pos + current_pos_index); goto RDRQ2; }
+
+/*Read *(source + *current_pos) from data*/
+RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
+		else { data = source[current_pos[current_pos_index]]; read = 0; goto S4; }
+
+/*Read *(LUT_Address + i) from data*/
+RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
+		else { data = *(LUT_Address + i); read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
+
+WRRQ:   if (waitrequest == 1) { goto WRRQ; }
+		else { *(LUT_Address + i) += (1 << j); write = 0;  j++; current_pos_index++; goto S2; }
+}
+
 unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned int datab) {
 	/*
 	@Author			: 	Alexis ROSSI
