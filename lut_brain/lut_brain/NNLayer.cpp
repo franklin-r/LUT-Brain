@@ -10,16 +10,9 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "Image.h"
+#include "asm.h"
 
 int my_debug = 0;
-int Start = 1;  		// Not really used, just an artefact to move to hardware ASM
-int Done;       		// Not really used, just an artefact to move to hardware ASM
-int rd;					// Not really used, just an artefact to move to hardware ASM
-int wr;					// Not really used, just an artefact to move to hardware ASM
-const void *addr;		// Not really used, just an artefact to move to hardware ASM
-int readdata;			// Not really used, just an artefact to move to hardware ASM
-int writedata;			// Not really used, just an artefact to move to hardware ASM
-int waitrequest = 0;	// Not really used, just an artefact to move to hardware ASM
 
 NNLayer::NNLayer() {
 	// TODO Auto-generated constructor stub
@@ -163,11 +156,11 @@ void NNLayer::buildAddress_hard_optimise(float* source, const int* current_pos, 
 
 	//Initialization
 INIT:	if (start == 0) { goto INIT; }
-	else { write = 0; read = 0; done = 0; i = 0; goto S1; }
+		else { write = 0; read = 0; done = 0; i = 0; goto S1; }
 
 //Check if all neurons are done
 S1:		if (i < n_neuron) { j = 0; goto S2; }
-	else { done = 1; return; }
+		else { done = 1; return; }
 
 // Check if all neuron inputs are connected; Read data in current_pos
 S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
@@ -195,6 +188,7 @@ WRRQ:   if (waitrequest == 1) { goto WRRQ; }
 
 }
 
+
 void NNLayer::lutForward(int* LUT_Address) {
 	// Fonction à remplacer
 	for (int i = 0; i < n_neuron; i++) {
@@ -204,412 +198,11 @@ void NNLayer::lutForward(int* LUT_Address) {
 }
 
 
-// 1st version non optimised
-void NNLayer::lutForward_ASM_hard(int *LUT_Address, int data) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	LUT_Address 	: Address of an LUT
-						data 			: Number of neuron in a layer and size of an LUT
-	@Out 			: 	Void
-	@Note			: 	Upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-	*/
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Ouptut
-	int result;
-	
-	
-	INIT 	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						n_neuron = data >> 16; LUT_size = data & 0xFFFF; result = 0; goto S1;}
-						
-	S1		:	if(i < n_neuron) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return;}
-													
-	S2 		:	if(waitrequest == 0) {rd = 1; wr = 0; addr = LUT_Address + i; goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	if(waitrequest == 0) {val_LUT_Address = LUT_Address[i]; 	// Only needed for the C++ code
-										rd = 1; wr = 0; addr = LUT_array + tmp + (val_LUT_Address >> 3); 
-										goto S4;}	
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
-										rd = 0; wr = 1; addr = value + i;
-										writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-										value[i] = writedata;				// Only needed for the C++ code
-										i = i + 1; goto S1;}
-				else {goto S4;}
-}
-
-// 1st version optimised
-void NNLayer::lutForward_ASM_hard_opti(int *LUT_Address, int data) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	LUT_Address 	: Address of an LUT
-						data 			: Number of neuron in a layer and size of an LUT
-	@Out 			: 	Void
-	@Note			: 	Upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-						The modification with the "non-optimized" version is the pre-computation of the
-						condition i + 1 < n_neuron
-						The bug correction was to change T1 = (i < n_neuron) to T1 = (i + 1 < n_neuron)
-	*/
-	
-	// Local variables for addresses
-	int *l_LUT_Address; unsigned char *l_LUT_array; float *l_value; 
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Test condition
-	int T1;
-	
-	// Ouptut
-	int result;
-	
-	
-	INIT 	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						n_neuron = data >> 16; LUT_size = data & 0xFFFF; T1 = 1; result = 0; goto S1;}
-						
-	S1		:	if(T1) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return;}
-													
-	S2 		:	if(waitrequest == 0) {rd = 1; wr = 0; addr = LUT_Address + i; goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	if(waitrequest == 0) {val_LUT_Address = LUT_Address[i]; 	// Only needed for the C++ code
-										rd = 1; wr = 0; addr = LUT_array + tmp + (val_LUT_Address >> 3); 
-										goto S4;}	
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-	S4		:	if(waitrequest == 0) {val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];	// Only needed for the C++ code
-										rd = 0; wr = 1; addr = value + i;
-										writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-										value[i] = writedata;				// Only needed for the C++ code
-										T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
-				else {goto S4;}
-}
-
-// 2nd version non optimised(1/2)
-// Overloaded
-void NNLayer::lutForward_ASM_hard2(const unsigned char *dataa, float *datab, char n) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	dataa 	: 	Either LUT_array (address of the current layer's LUT) or LUT_Address (addresse of the current LUT) 
-						datab 	: 	Either value (address of current layer's LUT output) or 
-									n_neuron (the number of neuron in a layer) and LUT_size (size of an LUT)
-						n		: 	Determine the operation to do
-										n = 0 : dataa = LUT_array and datab = value
-										n = 1 : dataa = LUT_address and datab = n_neuron and LUT_size
-	@Out 			: 	Void
-	@Note			: 	When n = 1, the upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-	*/
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Local addresses
-	static const unsigned char *l_LUT_array;
-	static float *l_value;
-	/* Below is commented for the purpose of C++ compilation */
-	//int *l_LUT_Address;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Ouptut
-	int result;
-	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						l_LUT_array = dataa; l_value = datab;
-						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-						//l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF;
-						result = 0; goto S1;}
-	
-	S0		:	if(n == 0) {i = n_neuron; goto S1;}			// We already have saved the addresses and we can exit by setting i 
-															// to n_neuron which then meets the return condition
-			 	else {goto S1;}
-				
-	/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-	S1		:	if(i < n_neuron) {tmp = LUT_size * i; /*goto S2;*/}
-				else {Done = 1; return;}
-				
-	/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-	/*												
-	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
-				rd = 1; wr = 0; addr = l_LUT_array + tmp + (val_LUT_Address >> 3);}	
-				
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-	S4		:	{val_LUT_array = l_LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
-										rd = 0; wr = 1; addr = l_value + i;
-										writedata = 1 & (*(l_LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-										l_value[i] = writedata;}			// Only needed for the C++ code
-										
-				if(waitrequest == 0) {i = i + 1; goto S1;}
-				else {goto S4;}
-	*/
-}
-
-
-// 2nd version non optimised(2/2)
-// Overloaded
-void NNLayer::lutForward_ASM_hard2(int *dataa, int datab, char n) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	dataa 	: 	Either LUT_array (address of the current layer's LUT) or LUT_Address (addresse of the current LUT) 
-						datab 	: 	Either value (address of current layer's LUT output) or 
-									n_neuron (the number of neuron in a layer) and LUT_size (size of an LUT)
-						n		: 	Determine the operation to do
-										n = 0 : dataa = LUT_array and datab = value
-										n = 1 : dataa = LUT_address and datab = n_neuron and LUT_size
-	@Out 			: 	Void
-	@Note			: 	When n = 1, the upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-	*/
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Local addresses
-	/* Below is commented for the purpose of C++ compilation */
-	//static const unsigned char *l_LUT_array;
-	//static float *l_value;
-	int *l_LUT_Address;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Ouptut
-	int result;
-	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-						//l_LUT_array = dataa; l_value = datab;
-						l_LUT_Address = dataa; n_neuron = datab >> 16; LUT_size = datab & 0xFFFF;
-						result = 0; goto S1;}
-	
-	S0		:	if(n == 0) {i = n_neuron; goto S1;}			// We already have saved the addresses and we can exit by setting i 
-															// to n_neuron which then meets the return condition
-			 	else {goto S1;}
-				
-	S1		:	if(i < n_neuron) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return;}
-				
-													
-	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
-	
-				// Below is LUT_array for the purpose of C++ compilation but should be l_LUT_array
-				rd = 1; wr = 0; addr = LUT_array + tmp + (val_LUT_Address >> 3);}	
-				
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-				// Below are LUT_array and value for the purpose of C++ compilation but should be l_LUT_array and l_value respectively
-	S4		:	{val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
-				rd = 0; wr = 1; addr = value + i;
-				writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-				value[i] = writedata;}			// Only needed for the C++ code
-				
-				if(waitrequest == 0) {i = i + 1; goto S1;}
-				else {goto S4;}
-}
-
-
-// 2nd version optimised(1/2)
-// Overloaded
-void NNLayer::lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab, char n) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	dataa 	: 	Either LUT_array (address of the current layer's LUT) or LUT_Address (addresse of the current LUT) 
-						datab 	: 	Either value (address of current layer's LUT output) or 
-									n_neuron (the number of neuron in a layer) and LUT_size (size of an LUT)
-						n		: 	Determine the operation to do
-										n = 0 : dataa = LUT_array and datab = value
-										n = 1 : dataa = LUT_address and datab = n_neuron and LUT_size
-	@Out 			: 	Void
-	@Note			: 	When n = 1, the upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-	*/
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Local addresses
-	static const unsigned char *l_LUT_array;
-	static float *l_value;
-	/* Below is commented for the purpose of C++ compilation */
-	//int *l_LUT_Address;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Test condition
-	int T0, T1;
-	
-	// Ouptut
-	int result;
-	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						l_LUT_array = dataa; l_value = datab;
-						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-						//l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF;
-						T0 = (n == 0); result = 0; goto S1;}
-	
-	S0		:	if(T0) {i = n_neuron; T1 = 1; goto S1;}			// We already have saved the addresses and we can exit by setting i 
-																// to n_neuron which then meets the return condition
-			 	else {T1 = 1; goto S1;}							// T1 is necessariliy true at the begining
-				
-	/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-	S1		:	if(T1) {tmp = LUT_size * i; /*goto S2;*/}
-				else {Done = 1; return;}
-				
-	/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-	/*												
-	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
-				rd = 1; wr = 0; addr = l_LUT_array + tmp + (val_LUT_Address >> 3);}	
-				
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-	S4		:	{val_LUT_array = l_LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
-										rd = 0; wr = 1; addr = l_value + i;
-										writedata = 1 & (*(l_LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-										l_value[i] = writedata;}			// Only needed for the C++ code
-										
-				if(waitrequest == 0) {T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
-				else {goto S4;}
-	*/
-}
-
-
-// 2nd version non optimised(2/2)
-// Overloaded
-void NNLayer::lutForward_ASM_hard_opti2(int *dataa, int datab, char n) {
-	/*
-	@Author			: 	Alexis ROSSI
-	@Description 	: 	Compute the output value of an LUT
-	@Args 			: 	dataa 	: 	Either LUT_array (address of the current layer's LUT) or LUT_Address (addresse of the current LUT) 
-						datab 	: 	Either value (address of current layer's LUT output) or 
-									n_neuron (the number of neuron in a layer) and LUT_size (size of an LUT)
-						n		: 	Determine the operation to do
-										n = 0 : dataa = LUT_array and datab = value
-										n = 1 : dataa = LUT_address and datab = n_neuron and LUT_size
-	@Out 			: 	Void
-	@Note			: 	When n = 1, the upper 16 bits of data are n_neuron and lower 16 bits are LUT_size
-						Called in NNLayer::propagate()
-	*/
-	
-	// Local variables for the input data
-	int n_neuron, LUT_size;
-	
-	// Local addresses
-	/* Below is commented for the purpose of C++ compilation */
-	//static const unsigned char *l_LUT_array;
-	//static float *l_value;
-	int *l_LUT_Address;
-	
-	// Variables
-	int i, tmp, val_LUT_Address;
-	char val_LUT_array;
-	
-	// Test condition
-	int T0, T1;
-	
-	// Ouptut
-	int result;
-	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						/* Below is commented for the purpose of C++ compilation but will be present in the VHDL */
-						//l_LUT_array = dataa; l_value = datab;
-						l_LUT_Address = dataa; n_neuron = datab >> 16; LUT_size = datab & 0xFFFF;
-						T0 = (n == 0);result = 0; goto S1;}
-	
-	S0		:	if(T0) {i = n_neuron; T1 = 1; goto S1;}			// We already have saved the addresses and we can exit by setting i 
-																// to n_neuron which then meets the return condition
-			 	else {T1 = 1; goto S1;}							// T1 is necessariliy true at the begining
-				
-	S1		:	if(T1) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return;}
-				
-													
-	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
-					
-				// LUT_Address[i] = val_LUT_Address = readdata
-	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
-	
-				// Below is LUT_array for the purpose of C++ compilation but should be l_LUT_array
-				rd = 1; wr = 0; addr = LUT_array + tmp + (val_LUT_Address >> 3);}	
-				
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
-				
-				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata	
-				// Below are LUT_array and value for the purpose of C++ compilation but should be l_LUT_array and l_value respectively
-	S4		:	{val_LUT_array = LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
-				rd = 0; wr = 1; addr = value + i;
-				writedata = 1 & (*(LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
-				value[i] = writedata;}			// Only needed for the C++ code
-				
-				if(waitrequest == 0) {T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
-				else {goto S4;}
-}
 
 float * NNLayer::propagate(float * source) {
 	// TODO Auto-generated constructor stub
 	int i;
-	static char n = 0;
+	static unsigned int n = 0;
 
 	if (my_debug) for (i=0; i<n_input; i++) {
 		printf("Input %i = %f\r\n", i, source[i]);
@@ -620,11 +213,15 @@ float * NNLayer::propagate(float * source) {
 
 	// Test section
 	buildAddress(source, current_pos, LUT_Address);                                 	// Code original
-	//buildAddress_hard(source, current_pos, LUT_Address);                            	// Test ASM hard
-	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                     // Test ASM hard optimisé
-	//lutForward(LUT_Address);                                                          // Code original
-	//lutForward_ASM_hard(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));         // Test ASM hard  
-	//lutForward_ASM_hard_opti(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));  	// Test ASM hard optimisé
+	//buildAddress(source, current_pos, LUT_Address);                                 // Code original
+	//buildAddress_hard(source, current_pos, LUT_Address);                            // Test ASM hard
+	//buildAddress_hard_optimise(source, current_pos, LUT_Address);                   // Test ASM hard optimisé
+
+	buildAddress_ctrl(0, n_neuron, n_input_per_neuron);
+	buildAddress_ctrl(1, (int)source, (int) LUT_Address);
+	buildAddress_ctrl(2, (int)current_pos, 0);
+
+	//lutForward(LUT_Address);                          // Code original
 	
 	if (n == 0) {
 		lutForward_ASM_hard2(LUT_array, value, n);

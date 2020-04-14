@@ -9,12 +9,14 @@
 #define IMAGE_H_
 
 #include "NN.h"
-//#include <io.h>
+#include "asm.h"
+ //#include <io.h>
 #include "stdlib.h"
 #include "stdio.h"
 #include "data.h"
 #include <iostream>
 #include <fstream>
+
 
 class Image {
 public:

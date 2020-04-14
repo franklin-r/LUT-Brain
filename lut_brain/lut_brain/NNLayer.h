@@ -8,6 +8,7 @@
 #ifndef NNLAYER_H_
 #define NNLAYER_H_
 
+
 class NNLayer {
 public:
 	NNLayer();
@@ -17,13 +18,9 @@ public:
 	void buildAddress(float* source, const int* current_pos, int* LUT_Address);
 	void buildAddress_hard(float* source, const int* current_pos, int* LUT_Address);
 	void buildAddress_hard_optimise(float* source, const int* current_pos, int* LUT_Address);
+
 	void lutForward(int* LUT_Address);
-	void lutForward_ASM_hard(int *LUT_Address, int data);
-	void lutForward_ASM_hard2(const unsigned char *dataa, float *datab, char n);		// Overload
-	void lutForward_ASM_hard2(int *dataa, int datab, char n);							// Overload
-	void lutForward_ASM_hard_opti(int *LUT_Address, int data) ;
-	void lutForward_ASM_hard_opti2(const unsigned char *dataa, float *datab, char n);	// Overload
-	void lutForward_ASM_hard_opti2(int *dataa, int datab, char n);						// Overload
+	
 	virtual ~NNLayer();	
 
 	int n_input;
