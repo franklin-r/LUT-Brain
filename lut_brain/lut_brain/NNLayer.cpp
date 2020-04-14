@@ -223,15 +223,11 @@ float * NNLayer::propagate(float * source) {
 
 	//lutForward(LUT_Address);                          // Code original
 	
-	if (n == 0) {
-		lutForward_ASM_hard2(LUT_array, value, n);
-		//lutForward_ASM_hard_opti2(LUT_array, value, n);
-		n = 1;
-	}
-	else {
-		lutForward_ASM_hard2(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF), n);
-		//lutForward_ASM_hard_opti2(LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF), n);
-	}
+	lutForward_ASM_hard(0, LUT_array, value);
+	lutForward_ASM_hard(1, LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
+	
+	//lutForward_ASM_hard_opti(0, LUT_array, value);
+	//lutForward_ASM_hard_opti(1, LUT_Address, (n_neuron << 16) | (LUT_size & 0xFFFF));
 	
 	delete LUT_Address;
 	if (my_debug) print();
