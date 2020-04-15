@@ -130,7 +130,7 @@ architecture a_custominstruction of lutForward is
 					when S2	=>
 						rd		<= '1';
 						wr		<= '0';
-						addr	<= std_logic_vector(l_LUT_Address + to_unsigned(i, 32));
+						addr	<= std_logic_vector(l_LUT_Address + to_unsigned(i, l_LUT_Address'length));
 						
 						if(waitrequest = '0') then
 							c_state	<= S3;
@@ -143,7 +143,7 @@ architecture a_custominstruction of lutForward is
 					when S3	=>
 						rd				<= '1';
 						wr				<= '0';
-						addr			<= std_logic_vector(l_LUT_array + to_unsigned(tmp, 32) + shift_right(unsigned(readdata), 3));
+						addr			<= std_logic_vector(l_LUT_array + to_unsigned(tmp, l_LUT_array'length) + shift_right(unsigned(readdata), 3));
 						val_LUT_Address	<= readdata;
 						
 						if(waitrequest = '0') then
@@ -157,7 +157,7 @@ architecture a_custominstruction of lutForward is
 					when others =>					-- S4
 						rd			<= '0';
 						wr			<= '1';
-						addr		<= std_logic_vector(l_value + to_unsigned(i, 32));
+						addr		<= std_logic_vector(l_value + to_unsigned(i, l_value'length));
 						writedata	<= x"00000001" and std_logic_vector(shift_right(unsigned(readdata), to_integer(unsigned(val_LUT_Address and x"00000007"))));
 						
 						if(waitrequest = '0') then

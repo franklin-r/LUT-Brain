@@ -56,8 +56,8 @@ architecture bench of lutForward_tb is
 	signal wr			: std_logic;							
 	signal rd			: std_logic;							
 
-  constant clock_period: time := 20 ns;
-  signal stop_the_clock: boolean := false;
+	constant clock_period: time := 20 ns;
+	signal stop_the_clock: boolean := false;
 
 begin
 
@@ -105,11 +105,13 @@ begin
 		
 		wait for clock_period;		-- Go through S1 and exit
 		  
+		---------------------------------------------------------------------------------------------------------------
+		-- Will make 8 iterations because we set n_neuron to 8
 		
 		start 	<= '1';
 		n 		<= '1';
 		dataa	<= x"00003000";
-		datab	<= x"00080006";		-- n_neuron = x"0010" = d16 / LUT_size = x"0006" = d6 
+		datab	<= x"00080006";		-- n_neuron = x"0008" = d8 / LUT_size = x"0006" = d6 
 		wait for clock_period;		-- Go through INIT
 		  
 		start 	<= '0';
@@ -119,10 +121,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"11111111";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"22222222";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -131,10 +133,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"33333333";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"44444444";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -149,10 +151,10 @@ begin
 		waitrequest	<= '0';
 		wait for clock_period;		-- Go through S2 again because of the waitrequest
 		
-		readdata	<= x"12345678";
+		readdata	<= x"55555555";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"66666666";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -161,10 +163,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"77777777";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"88888888";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -173,10 +175,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"99999999";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"11111111";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -185,7 +187,7 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"22222222";
 		waitrequest	<= '1';
 		wait for clock_period;		-- Go through S3
 		
@@ -194,7 +196,7 @@ begin
 		waitrequest	<= '0';
 		wait for clock_period;		-- Go through S3 again because of the waitrequest
 		
-		readdata	<= x"87654321";
+		readdata	<= x"33333333";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -203,10 +205,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"44444444";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"55555555";
 		wait for clock_period;		-- Go through S4
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -215,10 +217,10 @@ begin
 		
 		wait for clock_period;		-- Go through S2
 		
-		readdata	<= x"12345678";
+		readdata	<= x"66666666";
 		wait for clock_period;		-- Go through S3
 		
-		readdata	<= x"87654321";
+		readdata	<= x"77777777";
 		waitrequest	<= '1';
 		wait for clock_period;		-- Go through S4
 		

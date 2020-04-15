@@ -9,7 +9,7 @@ z2
 cModel Technology
 Z0 dC:/Users/alexi/Documents/ELE8307/LUT-Brain/SDRAM_Nios_Test/hdl/src
 Elutforward
-Z1 w1586881588
+Z1 w1586972761
 Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
@@ -22,9 +22,9 @@ V[dXflh?SPMhQiD?BBEKCL2
 !s100 DAGfI_3;R835L1fG>[RC?1
 Z7 OV;C;10.5c;63
 31
-Z8 !s110 1586969859
+Z8 !s110 1586972784
 !i10b 1
-Z9 !s108 1586969858.000000
+Z9 !s108 1586972783.000000
 Z10 !s90 -reportprogress|300|-93|../src/lutForward.vhd|
 Z11 !s107 ../src/lutForward.vhd|
 !i113 1
@@ -37,8 +37,8 @@ R4
 DEx4 work 10 lutforward 0 22 [dXflh?SPMhQiD?BBEKCL2
 l63
 L39
-V>S2gSc[<>?Q^Z[dj4fNJC3
-!s100 g26Pc1lTZf[6:PIWANT`]0
+VlTPQnWj=QbmVV6gN]OiX@0
+!s100 ghFANO@gY?Ho1IaIEMk=c0
 R7
 31
 R8
@@ -50,7 +50,7 @@ R11
 o-93
 R12
 Elutforward_tb
-Z13 w1586962890
+Z13 w1586971580
 R2
 R3
 R4
@@ -63,9 +63,9 @@ VV@:m?WGDg]1nXQ358_gY<3
 !s100 b[@>0YZI<ID66d;W3kca?0
 R7
 31
-Z16 !s110 1586969860
+Z16 !s110 1586972785
 !i10b 1
-Z17 !s108 1586969860.000000
+Z17 !s108 1586972784.000000
 Z18 !s90 -reportprogress|300|-93|../simu/lutForward_tb.vhd|
 Z19 !s107 ../simu/lutForward_tb.vhd|
 !i113 1
@@ -75,11 +75,11 @@ Abench
 R2
 R3
 R4
-DEx4 work 13 lutforward_tb 0 22 V@:m?WGDg]1nXQ358_gY<3
+Z20 DEx4 work 13 lutforward_tb 0 22 V@:m?WGDg]1nXQ358_gY<3
 l62
 L15
-V_J]4i5VYTfKW_^G;gA=<g3
-!s100 JZ>8>^JkkD<JXSZh_6HA81
+Z21 VD3Iob`=U^c7G8k6]g2J;C3
+Z22 !s100 fa`BfCLC9Y8zJdmRNmL]V2
 R7
 31
 R16
