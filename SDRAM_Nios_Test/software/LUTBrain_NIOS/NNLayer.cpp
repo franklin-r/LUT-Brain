@@ -80,7 +80,6 @@ void NNLayer::lutForward(int* LUT_Address) {
 	}
 }
 
-
 float * NNLayer::propagate(float * source) {
 	// TODO Auto-generated constructor stub
 	int i;

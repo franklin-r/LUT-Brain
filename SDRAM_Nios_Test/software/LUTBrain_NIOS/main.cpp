@@ -113,6 +113,7 @@ int main(int argc, char **argv)
 	network.layer[6].load_values(LAYER_SIZE, 36*OUTPUT_SIZE, 6, LUT_data6, pos_data6);
 	network.layer[7].load_values(36*OUTPUT_SIZE, 6*OUTPUT_SIZE, 6, LUT_data7, pos_data7);
 	network.layer[8].load_values(6*OUTPUT_SIZE, OUTPUT_SIZE, 6, LUT_data8, pos_data8);
+
 /*
     network.layer[0].print();
     network.layer[1].print();
@@ -128,28 +129,15 @@ int main(int argc, char **argv)
 	my_image.printToFile(0, 0, "output_data/input_image");
 	printf("Start processing ...\r\n");
 
-	/*
 	for (int i=0;i<10;i++) {
 		clock_t time1 = clock();
 		Image * result_image = my_image.apply_NN(&network, MATRIX_SIZE, i);
 		clock_t time2 = clock();
-		result_image->printToFile(0, 0, ("output_data/result_" + std::to_string(i)));
+        char buffer[256]; snprintf(buffer, 256, "output_data/result_%i", i);
+		result_image->printToFile(0, 0, buffer);
 		delete result_image;
-		printf("done in %d ms\r\n",(int)(time2-time1));
+		printf("done in %d ms\r\n",(time2-time1));
 	}
-	*/
-	
-	clock_t time1 = clock();
-	Image ** result_images = my_image.apply_NN(&network, MATRIX_SIZE);
-	clock_t time2 = clock();
-	printf("done in %d ms\r\n",(int)(time2-time1));
-	
-	for (int i = 0;i < 10; i++) {
-		result_images[i]->printToFile(0, 0, ("output_data/result_" + std::to_string(i)));
-		delete result_images[i];
-	}
-	delete result_images;
-	
 
 	return 0;
 }

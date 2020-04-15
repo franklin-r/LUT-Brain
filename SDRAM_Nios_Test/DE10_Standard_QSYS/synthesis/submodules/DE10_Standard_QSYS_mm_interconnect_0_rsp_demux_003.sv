@@ -27,8 +27,8 @@
 
 // ------------------------------------------
 // Generation parameters:
-//   output_name:         DE10_Standard_QSYS_mm_interconnect_0_rsp_demux_001
-//   ST_DATA_W:           108
+//   output_name:         DE10_Standard_QSYS_mm_interconnect_0_rsp_demux_003
+//   ST_DATA_W:           103
 //   ST_CHANNEL_W:        8
 //   NUM_OUTPUTS:         2
 //   VALID_WIDTH:         1
@@ -40,13 +40,13 @@
 // 15610 - Warning: Design contains x input pin(s) that do not drive logic
 //------------------------------------------
 
-module DE10_Standard_QSYS_mm_interconnect_0_rsp_demux_001
+module DE10_Standard_QSYS_mm_interconnect_0_rsp_demux_003
 (
     // -------------------
     // Sink
     // -------------------
     input  [1-1      : 0]   sink_valid,
-    input  [108-1    : 0]   sink_data, // ST_DATA_W=108
+    input  [103-1    : 0]   sink_data, // ST_DATA_W=103
     input  [8-1 : 0]   sink_channel, // ST_CHANNEL_W=8
     input                         sink_startofpacket,
     input                         sink_endofpacket,
@@ -56,14 +56,14 @@ module DE10_Standard_QSYS_mm_interconnect_0_rsp_demux_001
     // Sources 
     // -------------------
     output reg                      src0_valid,
-    output reg [108-1    : 0] src0_data, // ST_DATA_W=108
+    output reg [103-1    : 0] src0_data, // ST_DATA_W=103
     output reg [8-1 : 0] src0_channel, // ST_CHANNEL_W=8
     output reg                      src0_startofpacket,
     output reg                      src0_endofpacket,
     input                           src0_ready,
 
     output reg                      src1_valid,
-    output reg [108-1    : 0] src1_data, // ST_DATA_W=108
+    output reg [103-1    : 0] src1_data, // ST_DATA_W=103
     output reg [8-1 : 0] src1_channel, // ST_CHANNEL_W=8
     output reg                      src1_startofpacket,
     output reg                      src1_endofpacket,

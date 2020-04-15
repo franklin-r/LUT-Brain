@@ -9,12 +9,10 @@
 #define IMAGE_H_
 
 #include "NN.h"
-//#include <io.h>
+#include "io.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "data.h"
-#include <iostream>
-#include <fstream>
 
 class Image {
 public:
@@ -24,8 +22,8 @@ public:
 
 	unsigned char * source_pixel(int x, int y);
 	void copy_block(int x, int y, int size, float * target);
-	Image ** apply_NN(NN * network, int size);
-	void printToFile(int x, int y, std::string file_name);
+	Image * apply_NN(NN * network, int size, int pos);
+	void printToFile(int x, int y, const char *);
 	void print();
 	~Image();
 

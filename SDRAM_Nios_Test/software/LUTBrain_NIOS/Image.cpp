@@ -24,8 +24,8 @@ void Image::init(int new_length, int new_height, bool isInput) {
 	// TODO Auto-generated constructor stub
 	length = new_length;
 	height = new_height;
-	if (source_array != 0) delete[] source_array;
-	source_array = (isInput) ? (new unsigned char[height*length] BINARY_IMAGE) : (new unsigned char[height*length]);
+	if ((source_array != 0) && (source_array != BINARY_IMAGE)) delete[] source_array;
+	source_array = (isInput) ? (BINARY_IMAGE) : (new unsigned char[height*length]);
 }
 
 unsigned char * Image::source_pixel(int x, int y) {
@@ -49,16 +49,11 @@ void Image::copy_block(int x, int y, int size, float* target) {
  * image a l'entree de ce reseau de neuronnes.
  *
  *******************************************************/
-Image ** Image::apply_NN(NN * network, int size) {
+Image * Image::apply_NN(NN * network, int size, int pos) {
 	//float source[size*size];
 	float * source = new float[size*size];
-	//Image * result = new Image(length-size+1,height-size+1, false);
-	Image **tab_result = (Image**)malloc(network->layer[network->n_layer-1].n_neuron * sizeof(Image*));
-	
-	for(int i = 0; i < network->layer[network->n_layer-1].n_neuron; i++) {
-		tab_result[i] = new Image(length-size+1, height-size+1, false);
-	}
-	
+	Image * result = new Image(length-size+1,height-size+1, false);
+
 	printf("Processing line ");
 	for (int y=0; y<=height-size; y++) {
 		printf("%i,",y);
@@ -68,50 +63,43 @@ Image ** Image::apply_NN(NN * network, int size) {
 			network->propagate(source);
 
 			/* Stocker les bons/meilleurs matchs */
-			/*
 			unsigned char pixel;
 			pixel = 255*(network->layer[network->n_layer-1].value[pos]);
 			*(result->source_pixel(x,y)) = pixel;
-			*/
-			unsigned char pixel;
-			for(int k = 0; k < network->layer[network->n_layer-1].n_neuron; k++) {
-				pixel = 255*(network->layer[network->n_layer-1].value[k]);
-				//*(result->source_pixel(x,y)) = pixel;
-				*(tab_result[k]->source_pixel(x,y)) = pixel;
-			}
 		}
 	}
 
 	delete source;
 
 	printf("\r\n");
-	return tab_result;
+	return result;
 }
 
 /**********************************************************
  * Sauvegarde de l'image dans un fichier csv.
  *
  **********************************************************/
-
-void Image::printToFile(int x, int y, std::string file_name) {
-	
-	std::ofstream outputFile;
-	outputFile.open(file_name + ".csv");
+void Image::printToFile(int x, int y, const char * file_name) {
+/*
+	char buffer[256]; snprintf(buffer, 256, "%s.csv", file_name);
+	FILE *myFile = fopen(buffer, "wt");
 
 	for (int j = 0; j < height; j++) {
 		for (int i = 0; i < length; i++) {
-			outputFile << (unsigned int)(*source_pixel(i, j)) << ", ";
+			fprintf(myFile, "%i, ", (unsigned int)(*source_pixel(i, j)));
 		}
-		outputFile << "\n";
+		fprintf(myFile, "\n");
 	}
-	
-	outputFile.close();
+	fclose(myFile);
+*/
+	printf("printToFile removed for FPGA implementation\n");
 }
 
 /**********************************************************
  * Affiche l'image a l'ecran a la position x,y.
  *
  **********************************************************/
+
 void Image::print() {
 	printf("\n");
 	for(int i=0; i<length; i++) {
@@ -124,6 +112,6 @@ void Image::print() {
 }
 
 Image::~Image() {
-	if (source_array != 0) delete[] source_array;
+	if ((source_array != 0) && (source_array != BINARY_IMAGE)) delete[] source_array;
 }
 
