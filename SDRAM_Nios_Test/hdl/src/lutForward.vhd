@@ -4,7 +4,7 @@
 -- Description 	:	Computes the LUTs' output
 -- Context 		:	The block's purpose is to accelrate the propagation 
 --					the neural network
--- Released		:	
+-- Released		:	17/04/2020
 -- Updated		: 		
 
 
@@ -73,12 +73,12 @@ architecture a_custominstruction of lutForward is
 				addr		<= (others => '0');
 				writedata	<= (others => '0');
 				wr			<= '0';
-				rd			<= '0';
+				rd			<= '0';				
 				c_state 	<= INIT;
 				
 			elsif(rising_edge(real_clk)) then
 				case c_state is 
-					when INIT =>  
+					when INIT =>  				-- Initialisation of control signals
 						if(start = '0') then
 							c_state	<= INIT;
 							
@@ -94,10 +94,7 @@ architecture a_custominstruction of lutForward is
 							c_state		<= S0;
 						end if;													
 					
-					when S0 =>
-						rd			<= '0';
-						wr			<= '0';
-						
+					when S0 =>					-- Initialisation of data signals
 						if(T0) then
 							l_LUT_array	<= unsigned(dataa);
 							l_value		<= unsigned(datab);
@@ -114,7 +111,7 @@ architecture a_custominstruction of lutForward is
 							c_state			<= S1;
 						end if;
 						
-					when S1	=>
+					when S1	=>					-- Test whether to end the process or not
 						rd			<= '0';
 						wr			<= '0';
 						
@@ -127,7 +124,7 @@ architecture a_custominstruction of lutForward is
 							c_state	<= INIT;
 						end if;
 						
-					when S2	=>
+					when S2	=>					-- Read LUT_Address[i]
 						rd		<= '1';
 						wr		<= '0';
 						addr	<= std_logic_vector(l_LUT_Address + to_unsigned(i, l_LUT_Address'length));
@@ -140,7 +137,7 @@ architecture a_custominstruction of lutForward is
 						end if;
 					
 					-- Here, readdata = l_LUT_Address[i] = val_LUT_Address
-					when S3	=>
+					when S3	=>					-- Read LUT_array[LUT_size * i + (LUT_Address[i] >> 3)]
 						rd				<= '1';
 						wr				<= '0';
 						addr			<= std_logic_vector(l_LUT_array + to_unsigned(tmp, l_LUT_array'length) + shift_right(unsigned(readdata), 3));
@@ -154,7 +151,7 @@ architecture a_custominstruction of lutForward is
 						end if;
 					
 					-- Here, readdata = l_LUT_array[tmp + (val_LUT_Address >> 3)]
-					when others =>					-- S4
+					when others =>	-- S4		-- Write to value[i]
 						rd			<= '0';
 						wr			<= '1';
 						addr		<= std_logic_vector(l_value + to_unsigned(i, l_value'length));
@@ -172,7 +169,4 @@ architecture a_custominstruction of lutForward is
 				end case;
 			end if;	
 		end process;
-
-
-
 end architecture;

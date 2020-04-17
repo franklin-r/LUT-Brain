@@ -1,7 +1,7 @@
 -- File			:	lutForward_tb.vhd
 -- Author 		:	Alexis ROSSI <alexis.rossi@polymtl.ca>
 -- Description 	:	Testbench of the lutForward block
--- Released		:	
+-- Released		:	17/04/2020
 -- Updated		: 		
 
 

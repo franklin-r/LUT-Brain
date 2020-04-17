@@ -136,8 +136,8 @@ unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned in
 	*/
 	
 	/* Below are variables not really used in the C++ but necessary for the VHDL*/
-	int Start = 1;  		// Indicate that the ASM can start
-	int Done;       		// Indicate the the ASM is finished
+	int start = 1;  		// Indicate that the ASM can start
+	int done;       		// Indicate the the ASM is finished
 	int rd;					// Indicate a reading
 	int wr;					// Indicate a writing
 	const void *addr;		// Address to write to/read from
@@ -160,8 +160,8 @@ unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned in
 	// Ouptut
 	unsigned int result;
 	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
+	INIT	:	if(start == 0) {goto INIT;}
+				else {done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
 						result = 0; goto S0;}
 	
 	S0		:	if(n == 0) {l_LUT_array = (const unsigned char*)dataa; l_value = (float*)datab;
@@ -169,8 +169,9 @@ unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned in
 																	// to n_neuron which then meets the return condition
 			 	else {l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF; goto S1;}
 				
-	S1		:	if(i < n_neuron) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return result;}
+	S1		:	{rd = 0; wr = 0;}
+				if(i < n_neuron) {tmp = LUT_size * i; goto S2;}
+				else {done = 1; return result;}
 													
 	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
 				if(waitrequest == 0) {goto S3;}
@@ -246,7 +247,8 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 			 	else {l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF; 
 						T1 = 1; goto S1;}		// Necessarily true at the beginning
 				
-	S1		:	if(T1) {tmp = LUT_size * i; goto S2;}
+	S1		:	{rd = 0; wr = 0;}
+				if(T1) {tmp = LUT_size * i; goto S2;}
 				else {Done = 1; return result;}
 													
 	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
