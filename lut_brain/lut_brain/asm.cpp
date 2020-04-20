@@ -160,36 +160,36 @@ unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned in
 	// Ouptut
 	unsigned int result;
 	
-	INIT	:	if(start == 0) {goto INIT;}
-				else {done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						result = 0; goto S0;}
+	INIT	:	if(start) {done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
+							result = 0; goto S0;}
+				else {goto INIT;}
 	
-	S0		:	if(n == 0) {l_LUT_array = (const unsigned char*)dataa; l_value = (float*)datab;
-							LUT_size = 0; n_neuron = 0; goto S1;}	// We already have saved the addresses and we can exit by setting i 
-																	// to n_neuron which then meets the return condition
-			 	else {l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF; goto S1;}
+	S0		:	if(n) {l_LUT_Address = (int*)dataa; n_neuron = (int)datab >> 16; LUT_size = (int)datab & 0xFFFF; goto S1;}
+			 	else {l_LUT_array = (const unsigned char*)dataa; l_value = (float*)datab;
+						LUT_size = 0; n_neuron = 0; goto S1;}	// We already have saved the addresses and we can exit by setting i 
+																// to n_neuron which then meets the return condition
 				
 	S1		:	{rd = 0; wr = 0;}
 				if(i < n_neuron) {tmp = LUT_size * i; goto S2;}
 				else {done = 1; return result;}
 													
 	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
+				if(waitrequest) {goto S2;}
+				else {goto S3;}
 					
 				// LUT_Address[i] = val_LUT_Address = readdata
 	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
 				rd = 1; wr = 0; addr = l_LUT_array + tmp + (val_LUT_Address >> 3);}	
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
+				if(waitrequest) {goto S3;}
+				else {goto S4;}
 				
 				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata
 	S4		:	{val_LUT_array = l_LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
 				rd = 0; wr = 1; addr = l_value + i;
 				writedata = 1 & (*(l_LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
 				l_value[i] = writedata;}			// Only needed for the C++ code
-				if(waitrequest == 0) {i = i + 1; goto S1;}
-				else {goto S4;}
+				if(waitrequest) {goto S4;}
+				else {i = i + 1; goto S1;}
 }
 
 
@@ -210,8 +210,8 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 	*/
 	
 	/* Below are variables not really used in the C++ but necessary for the VHDL*/
-	int Start = 1;  		// Indicate that the ASM can start
-	int Done;       		// Indicate the the ASM is finished
+	int start = 1;  		// Indicate that the ASM can start
+	int done;       		// Indicate the the ASM is finished
 	int rd;					// Indicate a reading
 	int wr;					// Indicate a writing
 	const void *addr;		// Address to write to/read from
@@ -237,9 +237,9 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 	// Test condition
 	int T0, T1;
 	
-	INIT	:	if(Start == 0) {goto INIT;}
-				else {Done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
-						T0 = (n == 0); result = 0; goto S0;}
+	INIT	:	if(start) {done = 0; rd = 0; wr = 0; addr = 0; writedata = 0; i = 0;
+							T0 = (n == 0); result = 0; goto S0;}
+				else {goto INIT;}
 	
 	S0		:	if(T0) {l_LUT_array = (const unsigned char*)dataa; l_value = (float*)datab; T1 = 0;		// We want to exit if n = 0
 							LUT_size = 0; n_neuron = 0; goto S1;}	// We already have saved the addresses and we can exit by setting i 
@@ -249,23 +249,23 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 				
 	S1		:	{rd = 0; wr = 0;}
 				if(T1) {tmp = LUT_size * i; goto S2;}
-				else {Done = 1; return result;}
+				else {done = 1; return result;}
 													
 	S2 		:	{rd = 1; wr = 0; addr = l_LUT_Address + i;}
-				if(waitrequest == 0) {goto S3;}
-				else {goto S2;}
+				if(waitrequest) {goto S2;}
+				else {goto S3;}
 					
 				// LUT_Address[i] = val_LUT_Address = readdata
 	S3		:	{val_LUT_Address = l_LUT_Address[i]; 	// Only needed for the C++ code
 				rd = 1; wr = 0; addr = l_LUT_array + tmp + (val_LUT_Address >> 3);}	
-				if(waitrequest == 0) {goto S4;}
-				else {goto S3;}
+				if(waitrequest) {goto S3;}
+				else {goto S4;}
 				
 				// LUT_array[tmp + (val_LUT_Address >> 3)] = val_LUT_array = readdata
 	S4		:	{val_LUT_array = l_LUT_array[tmp + (val_LUT_Address >> 3)];		// Only needed for the C++ code
 				rd = 0; wr = 1; addr = l_value + i;
 				writedata = 1 & (*(l_LUT_array + tmp + (val_LUT_Address >> 3)) >> (val_LUT_Address & 0x7));
 				l_value[i] = writedata;}			// Only needed for the C++ code
-				if(waitrequest == 0) {T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
-				else {goto S4;}
+				if(waitrequest) {goto S4;}
+				else {T1 = (i + 1 < n_neuron); i = i + 1; goto S1;}
 }
