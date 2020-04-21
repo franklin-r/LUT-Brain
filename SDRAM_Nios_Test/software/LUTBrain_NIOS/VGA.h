@@ -1,9 +1,8 @@
+
 #ifndef   VGA_H
 #define   VGA_H
 
-#include "system.h"
-#include "io.h"
-
+#include "HAL/inc/io.h"
 
 //  VGA Parameter
 #define VGA_WIDTH     640

@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'DE10_Standard_QSYS'
  * SOPC Builder design path: ../../DE10_Standard_QSYS.sopcinfo
  *
- * Generated: Tue Feb 11 14:07:41 EST 2020
+ * Generated: Tue Apr 21 02:41:26 EDT 2020
  */
 
 /*
@@ -82,7 +82,7 @@
 #define ALT_RESET_DEVICE ONCHIP_MEMORY2
 #define ALT_RODATA_DEVICE SDRAM
 #define ALT_RWDATA_DEVICE SDRAM
-#define ALT_TEXT_DEVICE ONCHIP_MEMORY2
+#define ALT_TEXT_DEVICE SDRAM
 
 
 /*
@@ -98,7 +98,7 @@
  *
  */
 
-#define ALT_LOAD_COPY_RODATA
+#define ALT_LOAD_COPY_EXCEPTIONS
 #define ALT_LOAD_COPY_RWDATA
 
 #endif /* __LINKER_H_ */

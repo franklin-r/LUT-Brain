@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'DE10_Standard_QSYS'
  * SOPC Builder design path: ../../DE10_Standard_QSYS.sopcinfo
  *
- * Generated: Tue Feb 11 14:07:41 EST 2020
+ * Generated: Tue Apr 21 02:41:26 EDT 2020
  */
 
 /*
@@ -86,7 +86,14 @@ SECTIONS
         KEEP (*(.entry))
     } > reset
 
-    .exceptions :
+    /*
+     *
+     * This section's LMA is set to the .text region.
+     * crt0 will copy to this section's specified mapped region virtual memory address (VMA)
+     *
+     */
+
+    .exceptions : AT ( 0x0 )
     {
         PROVIDE (__ram_exceptions_start = ABSOLUTE(.));
         . = ALIGN(0x20);
@@ -117,7 +124,14 @@ SECTIONS
 
     PROVIDE (__flash_exceptions_start = LOADADDR(.exceptions));
 
-    .text :
+    /*
+     *
+     * This section's LMA is set to the .text region.
+     * crt0 will copy to this section's specified mapped region virtual memory address (VMA)
+     *
+     */
+
+    .text LOADADDR (.exceptions) + SIZEOF (.exceptions) : AT ( LOADADDR (.exceptions) + SIZEOF (.exceptions) )
     {
         /*
          * All code sections are merged into the text output section, along with
@@ -209,7 +223,7 @@ SECTIONS
         PROVIDE (__DTOR_END__ = ABSOLUTE(.));
         KEEP (*(.jcr))
         . = ALIGN(4);
-    } > onchip_memory2 = 0x3a880100 /* NOP instruction (always in big-endian byte ordering) */
+    } > sdram = 0x3a880100 /* NOP instruction (always in big-endian byte ordering) */
 
     /*
      *
@@ -218,7 +232,7 @@ SECTIONS
      *
      */
 
-    .rodata : AT ( LOADADDR (.text) + SIZEOF (.text) )
+    .rodata LOADADDR (.text) + SIZEOF (.text) : AT ( LOADADDR (.text) + SIZEOF (.text) )
     {
         PROVIDE (__ram_rodata_start = ABSOLUTE(.));
         . = ALIGN(4);
@@ -235,9 +249,13 @@ SECTIONS
      * This section's LMA is set to the .text region.
      * crt0 will copy to this section's specified mapped region virtual memory address (VMA)
      *
+     * .rwdata region equals the .text region, and is set to be loaded into .text region.
+     * This requires two copies of .rwdata in the .text region. One read writable at VMA.
+     * and one read-only at LMA. crt0 will copy from LMA to VMA on reset
+     *
      */
 
-    .rwdata : AT ( LOADADDR (.rodata) + SIZEOF (.rodata) )
+    .rwdata LOADADDR (.rodata) + SIZEOF (.rodata) : AT ( LOADADDR (.rodata) + SIZEOF (.rodata)+ SIZEOF (.rwdata) )
     {
         PROVIDE (__ram_rwdata_start = ABSOLUTE(.));
         . = ALIGN(4);
@@ -260,7 +278,14 @@ SECTIONS
 
     PROVIDE (__flash_rwdata_start = LOADADDR(.rwdata));
 
-    .bss :
+    /*
+     *
+     * This section's LMA is set to the .text region.
+     * crt0 will copy to this section's specified mapped region virtual memory address (VMA)
+     *
+     */
+
+    .bss LOADADDR (.rwdata) + SIZEOF (.rwdata) : AT ( LOADADDR (.rwdata) + SIZEOF (.rwdata) )
     {
         __bss_start = ABSOLUTE(.);
         PROVIDE (__sbss_start = ABSOLUTE(.));
@@ -305,7 +330,7 @@ SECTIONS
      *
      */
 
-    .sdram : AT ( LOADADDR (.rwdata) + SIZEOF (.rwdata) )
+    .sdram LOADADDR (.bss) + SIZEOF (.bss) : AT ( LOADADDR (.bss) + SIZEOF (.bss) )
     {
         PROVIDE (_alt_partition_sdram_start = ABSOLUTE(.));
         *(.sdram .sdram. sdram.*)
@@ -325,7 +350,7 @@ SECTIONS
      *
      */
 
-    .onchip_memory2 LOADADDR (.sdram) + SIZEOF (.sdram) : AT ( LOADADDR (.sdram) + SIZEOF (.sdram) )
+    .onchip_memory2 : AT ( LOADADDR (.sdram) + SIZEOF (.sdram) )
     {
         PROVIDE (_alt_partition_onchip_memory2_start = ABSOLUTE(.));
         *(.onchip_memory2 .onchip_memory2. onchip_memory2.*)

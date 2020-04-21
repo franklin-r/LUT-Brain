@@ -18,9 +18,14 @@
 #include <string>
 #include <ctime>
 
+#include "data.h"
+
 #include "NN.h"
 #include "Image.h"
-#include "data.h"
+#include "VGA.h"
+
+VGA * pVGA;
+char display[VGA_WIDTH*VGA_HEIGHT];
 
 int start = 1;  // Not really used, just an artefact to move to hardware ASM
 int done;       // Not really used, just an artefact to move to hardware ASM
@@ -31,6 +36,7 @@ int done;       // Not really used, just an artefact to move to hardware ASM
     C'est un exemple illustratif d'une fonction qui retourne la somme des valeurs d'un tableau
     C'est la version purement logicielle
 */
+
 int exemple_ASM(unsigned char* table, int length) {
     int result = 0;
     for (int i = 0; i < length; i++) {
@@ -85,18 +91,27 @@ int exemple_ASM_hard_optimise(unsigned char* input_table, int input_length) {   
  *********************************************************************/
 int main(int argc, char **argv)
 {
-	printf("Entering ELE8307 Fall 2018 Project main() \r\n");
+	printf("Entering ELE8307 Spring 2020 Project main() \r\n");
 
+	pVGA = new VGA(ELE8307_VGA_0_BASE, (int)display);
+	pVGA->clr();
+	pVGA->send_to_display();
+
+	// Initialisation de l'image
+	Image my_image(IMAGE_LENGTH, IMAGE_HEIGHT, true);
+	my_image.printToScreen(0,0,pVGA);
+
+/*
     unsigned char my_ASM_example[5] = { 1, 2, 3, 4, 5 };
     int result = exemple_ASM(my_ASM_example, 5);
     int result_hard = exemple_ASM_hard(my_ASM_example, 5);
     int result_hard_optimise = exemple_ASM_hard_optimise(my_ASM_example, 5);
 
     printf("Soft result : %i, hard result : %i, hard result optimise : %i\n", result, result_hard, result_hard_optimise);
+*/
 
-    /* Initialisation et application a une image de la machine neuronale (poids aleatoires) */
+	/* Initialisation et application a une image de la machine neuronale */
 
-    printf("> Exemple 1: NN Aleatoire \r\n");
     NN network(9);
 
 	// First Cluster
@@ -114,7 +129,7 @@ int main(int argc, char **argv)
 	network.layer[7].load_values(36*OUTPUT_SIZE, 6*OUTPUT_SIZE, 6, LUT_data7, pos_data7);
 	network.layer[8].load_values(6*OUTPUT_SIZE, OUTPUT_SIZE, 6, LUT_data8, pos_data8);
 
-/*
+   /*
     network.layer[0].print();
     network.layer[1].print();
     network.layer[2].print();
@@ -125,11 +140,12 @@ int main(int argc, char **argv)
 	network.layer[7].print();
 	network.layer[8].print();
     */
-	Image my_image(IMAGE_LENGTH, IMAGE_HEIGHT, true);
-	my_image.printToFile(0, 0, "output_data/input_image");
-	printf("Start processing ...\r\n");
+	//my_image.printToFile(0, 0, "output_data/input_image");
 
-	for (int i=0;i<10;i++) {
+	printf("Start processing ...\r\n");
+	clock_t time1 = clock();
+
+	/*for (int i=0;i<10;i++) {
 		clock_t time1 = clock();
 		Image * result_image = my_image.apply_NN(&network, MATRIX_SIZE, i);
 		clock_t time2 = clock();
@@ -137,7 +153,17 @@ int main(int argc, char **argv)
 		result_image->printToFile(0, 0, buffer);
 		delete result_image;
 		printf("done in %d ms\r\n",(time2-time1));
+	}*/
+
+	Image ** result_images = my_image.apply_NN_opt(&network, MATRIX_SIZE);
+	clock_t time2 = clock();
+	printf("done in %d ms\r\n",(int)(time2-time1));
+
+	for (int i = 0;i < 10; i++) {
+		//result_images[i]->printToFile(0, 0, ("output_data/result_" + std::to_string(i)));
+		result_images[i]->printToScreen(i*73,157,pVGA);
 	}
+	delete result_images;
 
 	return 0;
 }

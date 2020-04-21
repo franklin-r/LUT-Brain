@@ -82,6 +82,7 @@ unsigned int buildAddress_ctrl(unsigned int n, unsigned int dataa, unsigned int 
 
 	//Local variables
 	int i, j;
+	int neuron_stim = 0;
 	int current_pos_index = 0;
 
 	//Initialization/Write parameters
@@ -91,16 +92,16 @@ INIT:	if		(n == 0) { n_neuron = dataa; n_input_per_neuron = datab; done = 1; ret
 		else { return result = 1; }
 
 //Check if all neurons are done
-S1:		if (i < n_neuron) { j = 0; goto S2; }
-		else { done = 1; return result = 0; }
+S1:		if (i < n_neuron) { neuron_stim = 0; j = 0; goto S2; }
+		else { done = 1; return 0; }
 
 // Check if all neuron inputs are connected; Read data in current_pos
 S2:		if (j < n_input_per_neuron) { address = (void*)(current_pos + current_pos_index); read = 1; goto RDRQ1; }
-		else { i++; goto S1; }
+		else { address = LUT_Address + i; data = neuron_stim; write = 1; goto WRRQ; }
 
 //Check if input needs to be connected.
-S4:		if (source[current_pos[current_pos_index]] != 0) { address = LUT_Address + i; read = 1; goto RDRQ3; }
-		else { j++; current_pos_index++; goto S2; }
+S4:		if (source[current_pos[current_pos_index]] != 0) { neuron_stim += (1 << j); }
+		j++; current_pos_index++; goto S2;
 
 // Wait for memory
 /*Read *current_pos from data*/ //Read data in source + *current_pos
@@ -111,12 +112,8 @@ RDRQ1:  if (waitrequest == 1) { goto RDRQ1; }
 RDRQ2:  if (waitrequest == 1) { goto RDRQ2; }
 		else { data = source[current_pos[current_pos_index]]; read = 0; goto S4; }
 
-/*Read *(LUT_Address + i) from data*/
-RDRQ3:  if (waitrequest == 1) { goto RDRQ3; }
-		else { data = *(LUT_Address + i); read = 0; address = LUT_Address + i; data = *(LUT_Address + i) + (1 << j); write = 1; goto WRRQ; }
-
 WRRQ:   if (waitrequest == 1) { goto WRRQ; }
-		else { *(LUT_Address + i) += (1 << j); write = 0;  j++; current_pos_index++; goto S2; }
+else { *(LUT_Address + i) = neuron_stim;  write = 0;  i++; goto S1; }
 }
 
 unsigned int lutForward_ASM_hard(unsigned int n, unsigned int dataa, unsigned int datab) {
@@ -208,6 +205,7 @@ unsigned int lutForward_ASM_hard_opti(unsigned int n, unsigned int dataa, unsign
 						Called in NNLayer::propagate()
 	*/
 	
+
 	/* Below are variables not really used in the C++ but necessary for the VHDL*/
 	int Start = 1;  		// Indicate that the ASM can start
 	int Done;       		// Indicate the the ASM is finished

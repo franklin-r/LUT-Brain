@@ -5,8 +5,11 @@
  *      Author: jpdavid
  */
 
+
 #ifndef NN_H_
 #define NN_H_
+
+#include <stdio.h>
 
 #include "NNLayer.h"
 
@@ -17,7 +20,7 @@ public:
 
 	int n_layer;
 	NNLayer * layer;
-	float * propagate(float * source);
+	int * propagate(int * source);
 	int  getMaxOutputIndex();
 	int getMaxOutputValue();
 	void print();

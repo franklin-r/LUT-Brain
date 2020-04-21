@@ -43,9 +43,9 @@
 //   ARBITRATION_SHARES:  1
 //   ARBITRATION_SCHEME   "no-arb"
 //   PIPELINE_ARB:        0
-//   PKT_TRANS_LOCK:      72 (arbitration locking enabled)
-//   ST_DATA_W:           108
-//   ST_CHANNEL_W:        8
+//   PKT_TRANS_LOCK:      180 (arbitration locking enabled)
+//   ST_DATA_W:           220
+//   ST_CHANNEL_W:        9
 // ------------------------------------------
 
 module DE10_Standard_QSYS_mm_interconnect_0_rsp_mux
@@ -54,8 +54,8 @@ module DE10_Standard_QSYS_mm_interconnect_0_rsp_mux
     // Sinks
     // ----------------------
     input                       sink0_valid,
-    input [108-1   : 0]  sink0_data,
-    input [8-1: 0]  sink0_channel,
+    input [220-1   : 0]  sink0_data,
+    input [9-1: 0]  sink0_channel,
     input                       sink0_startofpacket,
     input                       sink0_endofpacket,
     output                      sink0_ready,
@@ -65,8 +65,8 @@ module DE10_Standard_QSYS_mm_interconnect_0_rsp_mux
     // Source
     // ----------------------
     output                      src_valid,
-    output [108-1    : 0] src_data,
-    output [8-1 : 0] src_channel,
+    output [220-1    : 0] src_data,
+    output [9-1 : 0] src_channel,
     output                      src_startofpacket,
     output                      src_endofpacket,
     input                       src_ready,
@@ -77,13 +77,13 @@ module DE10_Standard_QSYS_mm_interconnect_0_rsp_mux
     input clk,
     input reset
 );
-    localparam PAYLOAD_W        = 108 + 8 + 2;
+    localparam PAYLOAD_W        = 220 + 9 + 2;
     localparam NUM_INPUTS       = 1;
     localparam SHARE_COUNTER_W  = 1;
     localparam PIPELINE_ARB     = 0;
-    localparam ST_DATA_W        = 108;
-    localparam ST_CHANNEL_W     = 8;
-    localparam PKT_TRANS_LOCK   = 72;
+    localparam ST_DATA_W        = 220;
+    localparam ST_CHANNEL_W     = 9;
+    localparam PKT_TRANS_LOCK   = 180;
 
     assign	src_valid			=  sink0_valid;
     assign	src_data			=  sink0_data;

@@ -5,14 +5,18 @@
  *      Author: jpdavid
  */
 
+
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#include "NN.h"
-#include "io.h"
-#include "stdlib.h"
-#include "stdio.h"
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "data.h"
+
+#include "NN.h"
+#include "VGA.h"
+#include "asm.h"
 
 class Image {
 public:
@@ -21,9 +25,12 @@ public:
 	void init(int new_length, int new_height, bool isInput);
 
 	unsigned char * source_pixel(int x, int y);
-	void copy_block(int x, int y, int size, float * target);
+	void copy_block(int x, int y, int size, int * target);
 	Image * apply_NN(NN * network, int size, int pos);
+	Image ** apply_NN_opt(NN * network, int size);
+
 	void printToFile(int x, int y, const char *);
+	void printToScreen(int x, int y, VGA *pVGA);
 	void print();
 	~Image();
 

@@ -139,17 +139,17 @@ ACDS_VERSION := 18.1
 # Define path to the application ELF. 
 # It may be used by the makefile fragments so is defined before including them. 
 # 
-ELF := LUTBrain_NIOS.elf
+ELF := lutbrain_nios.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS := .metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+C_SRCS :=
 CXX_SRCS += Image.cpp
 CXX_SRCS += NN.cpp
 CXX_SRCS += NNLayer.cpp
 CXX_SRCS += VGA.cpp
+CXX_SRCS += data.cpp
 CXX_SRCS += main.cpp
-CXX_SRCS += .metadata/.plugins/org.eclipse.cdt.make.core/specs.cpp
-CXX_SRCS += lut_brain.cpp
+CXX_SRCS += asm.cpp
 ASM_SRCS :=
 
 
@@ -183,7 +183,7 @@ CRT0 :=
 SYS_LIB :=
 
 # Define path to the root of the BSP.
-BSP_ROOT_DIR := ../LUTBrain_NIOS_bsp/
+BSP_ROOT_DIR := ../lutbrain_nios_bsp/
 
 # List of application specific include directories, library directories and library names
 APP_INCLUDE_DIRS :=

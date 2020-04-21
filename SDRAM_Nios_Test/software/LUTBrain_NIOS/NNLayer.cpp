@@ -6,10 +6,6 @@
  */
 
 #include "NNLayer.h"
-#include "math.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "Image.h"
 
 int my_debug = 0;
 
@@ -38,7 +34,7 @@ void NNLayer::init(int new_n_input, int new_n_neuron, int nipn, const unsigned c
 	LUT_size = ((1<<n_input_per_neuron) + 7)/8;
 	LUT_array = LUT_data;
 	pos_array = pos_data;
-	value = new float[n_neuron];
+	value = new int[n_neuron];
 }
 
 unsigned int simpleRand() {
@@ -63,7 +59,7 @@ NNLayer::~NNLayer() {
 	delete value;
 }
 
-void NNLayer::buildAddress(float* source, const int* current_pos, int* LUT_Address) {
+void NNLayer::buildAddress(int* source, const int* current_pos, int* LUT_Address) {
 	// Fonction à remplacer
 	for (int i = 0; i < n_neuron; i++) {
 		for (int j = 0; j < n_input_per_neuron; j++) {
@@ -76,23 +72,25 @@ void NNLayer::lutForward(int* LUT_Address) {
 	// Fonction à remplacer
 	for (int i = 0; i < n_neuron; i++) {
 		value[i] = 1 & (LUT_array[LUT_size * i + (LUT_Address[i] >> 3)] >> (LUT_Address[i] & 0x7));
-		if (my_debug) printf("LUT%i[%i] = %f\r\n", i, LUT_Address[i], value[i]);
+		if (my_debug) printf("LUT%i[%i] = %d\r\n", i, LUT_Address[i], value[i]);
 	}
 }
 
-float * NNLayer::propagate(float * source) {
+int * NNLayer::propagate(int * source) {
 	// TODO Auto-generated constructor stub
 	int i;
 
 	if (my_debug) for (i=0; i<n_input; i++) {
-		printf("Input %i = %f\r\n", i, source[i]);
+		printf("Input %i = %d\r\n", i, source[i]);
 	}
 
 	const int * current_pos = pos_array;
 	int *LUT_Address = new int[n_neuron] { 0 };
 
-	buildAddress(source, current_pos, LUT_Address);
-	lutForward(LUT_Address);
+	buildAddress_hard(n_neuron, n_input_per_neuron, (int)source, (int)LUT_Address, (int)current_pos);
+	lutForward_hard((int)LUT_array, (int)value, (int)LUT_Address, n_neuron, LUT_size);
+	//buildAddress(source, current_pos, LUT_Address);
+	//lutForward(LUT_Address,);
 
 	delete LUT_Address;
 	if (my_debug) print();
@@ -117,7 +115,7 @@ void NNLayer::print() {
 			if (j!=0) printf(", %i", *(current_pos++));
 			else printf("%i", *(current_pos++));
 		}
-		printf("}, %f, {",value[i]);
+		printf("}, %d, {",value[i]);
 		for (int j=LUT_size-1; j>=0; j--) {
 			unsigned int hex_value = LUT_array[LUT_size * i + j];
 			if (hex_value<16) printf("0");

@@ -1,0 +1,26 @@
+#ifndef ASM_H_
+#define ASM_H_
+
+#include "system.h"
+
+int buildAddress_hard(){
+	ALT_CI_BUILDADDRESS_0(0,n_neuron,n_input_per_neuron);
+	ALT_CI_BUILDADDRESS_0(1,(int)source,(int)LUT_Address);
+	ALT_CI_BUILDADDRESS_0(2,(int)current_pos,0);
+}
+
+
+int lutForward_hard(){
+	ALT_CI_LUTFORWARD_0(0,LUT_array, value);
+	ALT_CI_LUTFORWARD_0(1,LUT_Address,(n_neuron << 16) | (LUT_size & 0xFFFF));
+}
+
+
+int copyBlock_hard(){
+	ALT_CI_COPYBLOCK_0(0,size,(int)source);
+	ALT_CI_COPYBLOCK_0(1,length,(int)source_array);
+	ALT_CI_COPYBLOCK_0(2,x,y);
+}
+
+
+#endif /* ASM_H_ */

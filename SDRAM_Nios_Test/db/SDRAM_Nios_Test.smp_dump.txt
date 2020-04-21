@@ -34,6 +34,34 @@ i_state.011 0 0 1 0 0 1
 i_state.101 0 1 0 0 0 1 
 i_state.111 1 0 0 0 0 1 
 
+State Machine - |SDRAM_Nios_Test|DE10_Standard_QSYS:u0|lutForward:lutforward_0|c_state
+Name c_state.S4 c_state.S3 c_state.S2 c_state.S1 c_state.S0 c_state.INIT 
+c_state.INIT 0 0 0 0 0 0 
+c_state.S0 0 0 0 0 1 1 
+c_state.S1 0 0 0 1 0 1 
+c_state.S2 0 0 1 0 0 1 
+c_state.S3 0 1 0 0 0 1 
+c_state.S4 1 0 0 0 0 1 
+
+State Machine - |SDRAM_Nios_Test|DE10_Standard_QSYS:u0|copyBlock:copyblock_0|etat
+Name etat.S4 etat.S3 etat.S2 etat.S1 etat.INIT 
+etat.INIT 0 0 0 0 0 
+etat.S1 0 0 0 1 1 
+etat.S2 0 0 1 0 1 
+etat.S3 0 1 0 0 1 
+etat.S4 1 0 0 0 1 
+
+State Machine - |SDRAM_Nios_Test|DE10_Standard_QSYS:u0|buildAddress:buildaddress_0|etat
+Name etat.WRRQ etat.RDRQ3 etat.RDRQ2 etat.RDRQ1 etat.S4 etat.S2 etat.S1 etat.INIT 
+etat.INIT 0 0 0 0 0 0 0 0 
+etat.S1 0 0 0 0 0 0 1 1 
+etat.S2 0 0 0 0 0 1 0 1 
+etat.S4 0 0 0 0 1 0 0 1 
+etat.RDRQ1 0 0 0 1 0 0 0 1 
+etat.RDRQ2 0 0 1 0 0 0 0 1 
+etat.RDRQ3 0 1 0 0 0 0 0 1 
+etat.WRRQ 1 0 0 0 0 0 0 1 
+
 State Machine - |SDRAM_Nios_Test|DE10_Standard_QSYS:u0|vga:ele8307_vga_0|sm1
 Name sm1.read2 sm1.read1 sm1.idle 
 sm1.idle 0 0 0 

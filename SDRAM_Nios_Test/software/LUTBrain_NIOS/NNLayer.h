@@ -5,8 +5,16 @@
  *      Author: jpdavid
  */
 
+
 #ifndef NNLAYER_H_
 #define NNLAYER_H_
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#include "asm.h"
 
 class NNLayer {
 public:
@@ -14,7 +22,7 @@ public:
 	NNLayer(int new_n_input, int new_n_neuron, int nipn, const unsigned char* LUT_data, const int* pos_data);
 	void init(int new_n_input, int new_n_neuron, int nipn, const unsigned char* LUT_data, const int* pos_data);
 	void load_values(int new_n_input, int new_n_neuron, int nipn, const unsigned char* LUT_data, const int* pos_data);
-	void buildAddress(float* source, const int* current_pos, int* LUT_Address);
+	void buildAddress(int* source, const int* current_pos, int* LUT_Address);
 	void lutForward(int* LUT_Address);
 	virtual ~NNLayer();
 
@@ -25,9 +33,9 @@ public:
 
 	const unsigned char *LUT_array;
 	const int *pos_array;
-	float *value;
+	int *value;
 
-	float * propagate(float * source);
+	int * propagate(int * source);
 
 	void print_activation();
 	void print();

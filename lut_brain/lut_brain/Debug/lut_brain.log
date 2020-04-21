@@ -1,1 +1,5 @@
-﻿
+﻿  NNLayer.cpp
+C:\Users\Louis-Normand\Documents\Travail\LUT-Brain\lut_brain\lut_brain\NNLayer.cpp(126,60): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Louis-Normand\Documents\Travail\LUT-Brain\lut_brain\lut_brain\NNLayer.cpp(181,54): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Louis-Normand\Documents\Travail\LUT-Brain\lut_brain\lut_brain\NNLayer.cpp(192,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  lut_brain.vcxproj -> C:\Users\Louis-Normand\Documents\Travail\LUT-Brain\lut_brain\Debug\lut_brain.exe

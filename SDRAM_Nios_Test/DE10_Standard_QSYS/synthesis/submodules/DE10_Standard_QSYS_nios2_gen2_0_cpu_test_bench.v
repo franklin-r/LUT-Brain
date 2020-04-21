@@ -47,6 +47,7 @@ module DE10_Standard_QSYS_nios2_gen2_0_cpu_test_bench (
                                                          W_estatus_reg,
                                                          W_exception_reg,
                                                          W_iw,
+                                                         W_iw_custom_n,
                                                          W_iw_op,
                                                          W_iw_opx,
                                                          W_pcb,
@@ -99,8 +100,8 @@ module DE10_Standard_QSYS_nios2_gen2_0_cpu_test_bench (
   input   [  7: 0] M_bht_ptr_unfiltered;
   input   [  1: 0] M_bht_wr_data_unfiltered;
   input            M_bht_wr_en_unfiltered;
-  input   [ 27: 0] M_mem_baddr;
-  input   [ 27: 0] M_target_pcb;
+  input   [ 26: 0] M_mem_baddr;
+  input   [ 26: 0] M_target_pcb;
   input            M_valid;
   input   [ 31: 0] W_badaddr_reg;
   input   [ 31: 0] W_bstatus_reg;
@@ -108,28 +109,29 @@ module DE10_Standard_QSYS_nios2_gen2_0_cpu_test_bench (
   input   [ 31: 0] W_estatus_reg;
   input   [ 31: 0] W_exception_reg;
   input   [ 31: 0] W_iw;
+  input   [  7: 0] W_iw_custom_n;
   input   [  5: 0] W_iw_op;
   input   [  5: 0] W_iw_opx;
-  input   [ 27: 0] W_pcb;
+  input   [ 26: 0] W_pcb;
   input   [ 31: 0] W_status_reg;
   input            W_valid;
   input   [111: 0] W_vinst;
   input            W_wr_dst_reg;
   input            clk;
-  input   [ 27: 0] d_address;
+  input   [ 26: 0] d_address;
   input   [  3: 0] d_byteenable;
   input            d_read;
   input            d_readdatavalid;
   input            d_write;
-  input   [ 27: 0] i_address;
+  input   [ 26: 0] i_address;
   input            i_read;
   input            i_readdatavalid;
   input            reset_n;
 
 
 wire             A_iw_invalid;
-reg     [ 27: 0] A_mem_baddr;
-reg     [ 27: 0] A_target_pcb;
+reg     [ 26: 0] A_mem_baddr;
+reg     [ 26: 0] A_target_pcb;
 wire    [ 31: 0] A_wr_data_filtered;
 wire             A_wr_data_unfiltered_0_is_x;
 wire             A_wr_data_unfiltered_10_is_x;
@@ -213,6 +215,7 @@ wire             W_op_cmpltu;
 wire             W_op_cmpltui;
 wire             W_op_cmpne;
 wire             W_op_cmpnei;
+wire             W_op_copyblock_0;
 wire             W_op_crst;
 wire             W_op_custom;
 wire             W_op_div;
@@ -240,6 +243,7 @@ wire             W_op_ldhuio;
 wire             W_op_ldl;
 wire             W_op_ldw;
 wire             W_op_ldwio;
+wire             W_op_lutforward_0;
 wire             W_op_mul;
 wire             W_op_muli;
 wire             W_op_mulxss;
@@ -313,7 +317,7 @@ wire             W_op_xor;
 wire             W_op_xorhi;
 wire             W_op_xori;
 reg     [ 31: 0] W_st_data;
-reg     [ 27: 0] W_target_pcb;
+reg     [ 26: 0] W_target_pcb;
 reg              W_valid_crst;
 reg              W_valid_hbreak;
 reg              W_valid_intr;
@@ -446,7 +450,9 @@ wire             test_has_ended;
   assign W_op_intr = (W_iw_opx == 61) & W_is_opx_inst;
   assign W_op_crst = (W_iw_opx == 62) & W_is_opx_inst;
   assign W_op_opx_rsv63 = (W_iw_opx == 63) & W_is_opx_inst;
-  assign W_op_buildaddress_0 = W_op_custom & 1'b1;
+  assign W_op_buildaddress_0 = W_op_custom & ({W_iw_custom_n[3 : 2] , 2'b0} == 4'h0);
+  assign W_op_copyblock_0 = W_op_custom & ({W_iw_custom_n[3 : 2] , 2'b0} == 4'h8);
+  assign W_op_lutforward_0 = W_op_custom & ({W_iw_custom_n[3 : 1] , 1'b0} == 4'h4);
   assign W_is_opx_inst = W_iw_op == 58;
   always @(posedge clk or negedge reset_n)
     begin

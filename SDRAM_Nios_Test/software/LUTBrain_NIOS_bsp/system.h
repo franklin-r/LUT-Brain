@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'DE10_Standard_QSYS'
  * SOPC Builder design path: ../../DE10_Standard_QSYS.sopcinfo
  *
- * Generated: Sat Mar 28 16:41:27 EDT 2020
+ * Generated: Tue Apr 21 02:42:15 EDT 2020
  */
 
 /*
@@ -137,6 +137,22 @@
 
 
 /*
+ * Custom instruction macros
+ *
+ */
+
+#define ALT_CI_BUILDADDRESS_0(n,A,B) __builtin_custom_inii(ALT_CI_BUILDADDRESS_0_N+(n&ALT_CI_BUILDADDRESS_0_N_MASK),(A),(B))
+#define ALT_CI_BUILDADDRESS_0_N 0x0
+#define ALT_CI_BUILDADDRESS_0_N_MASK ((1<<2)-1)
+#define ALT_CI_COPYBLOCK_0(n,A,B) __builtin_custom_inii(ALT_CI_COPYBLOCK_0_N+(n&ALT_CI_COPYBLOCK_0_N_MASK),(A),(B))
+#define ALT_CI_COPYBLOCK_0_N 0x8
+#define ALT_CI_COPYBLOCK_0_N_MASK ((1<<2)-1)
+#define ALT_CI_LUTFORWARD_0(n,A,B) __builtin_custom_inii(ALT_CI_LUTFORWARD_0_N+(n&ALT_CI_LUTFORWARD_0_N_MASK),(A),(B))
+#define ALT_CI_LUTFORWARD_0_N 0x4
+#define ALT_CI_LUTFORWARD_0_N_MASK ((1<<1)-1)
+
+
+/*
  * Define for each module class mastered by the CPU
  *
  */
@@ -148,7 +164,10 @@
 #define __ALTERA_AVALON_SYSID_QSYS
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
+#define __BUILDADDRESS
+#define __COPYBLOCK
 #define __ELE8307_VGA
+#define __LUTFORWARD
 
 
 /*
@@ -337,7 +356,7 @@
 #define SYSID_QSYS_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_NAME "/dev/sysid_qsys"
 #define SYSID_QSYS_SPAN 8
-#define SYSID_QSYS_TIMESTAMP 1585423257
+#define SYSID_QSYS_TIMESTAMP 1587448445
 #define SYSID_QSYS_TYPE "altera_avalon_sysid_qsys"
 
 

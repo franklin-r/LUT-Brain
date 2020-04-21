@@ -1,12 +1,12 @@
-Fitter Status : Successful - Sat Mar 28 15:57:25 2020
+Fitter Status : Successful - Tue Apr 21 02:32:56 2020
 Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 Revision Name : SDRAM_Nios_Test
 Top-level Entity Name : SDRAM_Nios_Test
 Family : Cyclone V
 Device : 5CSXFC6D6F31C6
 Timing Models : Final
-Logic utilization (in ALMs) : 2,478 / 41,910 ( 6 % )
-Total registers : 3650
+Logic utilization (in ALMs) : 2,541 / 41,910 ( 6 % )
+Total registers : 3669
 Total pins : 168 / 499 ( 34 % )
 Total virtual pins : 0
 Total block memory bits : 1,095,552 / 5,662,720 ( 19 % )

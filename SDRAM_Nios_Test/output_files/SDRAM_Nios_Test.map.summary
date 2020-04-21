@@ -1,10 +1,10 @@
-Analysis & Synthesis Status : Successful - Sat Mar 28 15:33:35 2020
+Analysis & Synthesis Status : Successful - Tue Apr 21 02:30:02 2020
 Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 Revision Name : SDRAM_Nios_Test
 Top-level Entity Name : SDRAM_Nios_Test
 Family : Cyclone V
 Logic utilization (in ALMs) : N/A
-Total registers : 3372
+Total registers : 3448
 Total pins : 168
 Total virtual pins : 0
 Total block memory bits : 1,095,552

@@ -1,18 +1,12 @@
-obj/default/NN.o: NN.cpp NN.h NNLayer.h VGA.h \
- ../LUTBrain_NIOS_bsp/system.h ../LUTBrain_NIOS_bsp/linker.h \
- ../LUTBrain_NIOS_bsp//HAL/inc/io.h \
- ../LUTBrain_NIOS_bsp//HAL/inc/alt_types.h
+obj/default/NN.o: NN.cpp NN.h NNLayer.h asm.h \
+ ../lutbrain_nios_bsp/system.h ../lutbrain_nios_bsp/linker.h
 
 NN.h:
 
 NNLayer.h:
 
-VGA.h:
+asm.h:
 
-../LUTBrain_NIOS_bsp/system.h:
+../lutbrain_nios_bsp/system.h:
 
-../LUTBrain_NIOS_bsp/linker.h:
-
-../LUTBrain_NIOS_bsp//HAL/inc/io.h:
-
-../LUTBrain_NIOS_bsp//HAL/inc/alt_types.h:
+../lutbrain_nios_bsp/linker.h:

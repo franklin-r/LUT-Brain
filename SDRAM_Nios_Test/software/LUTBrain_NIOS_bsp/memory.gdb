@@ -3,7 +3,7 @@
 # Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'DE10_Standard_QSYS'
 # SOPC Builder design path: ../../DE10_Standard_QSYS.sopcinfo
 #
-# Generated: Tue Feb 11 14:07:41 EST 2020
+# Generated: Tue Apr 21 02:41:26 EDT 2020
 
 # DO NOT MODIFY THIS FILE
 #
